@@ -1,6 +1,6 @@
 var decoders = {
     visa: function (type, data) {
-        if (data.dates && data.dates[0] != "01/01/1990") {
+        if (data.dates && data.dates[0] != "01/01/1900") {
             var $types = decoders.$getTypeGroup($('.visas .list'), type);
             for (var index in data.dates) {
                 var appointment = data.dates[index];
