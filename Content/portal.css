@@ -1,0 +1,47 @@
+.group {
+    width: 400px;
+    margin-bottom: 25px;
+}
+
+.group .header {
+    font-size: 20;
+    font-weight: bold;
+}
+
+.group .list {
+
+}
+
+.group .list .typegroup {
+    position: relative;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    padding-left: 130px;
+    min-height: 30px;
+}
+
+.group .list .typegroup .type {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    padding: 2px;
+    background-color: #EEE;
+    text-align: center;
+    width: 120px;
+}
+
+.group .list .appointment {
+    
+}
+
+.group .appointlink {
+    display: block;
+    width: 150px;
+    padding: 10;
+    background-color: #449d44;
+    text-align: center;
+    color: white;
+    font-size: 15px;
+    text-decoration: none;
+}
