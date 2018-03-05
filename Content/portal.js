@@ -1,6 +1,6 @@
 var decoders = {
     visa: function (type, data) {
-        if (data.dates && data.dates[0] != "01/01/1900") {
+        if (data.dates && data.dates.length && data.dates[0] != "01/01/1900") {
             var $types = decoders.$getTypeGroup($('.visas .list'), type);
             for (var index in data.dates) {
                 var appointment = data.dates[index];
@@ -10,7 +10,7 @@ var decoders = {
         }
     },
     irp: function (type, data) {
-        if (data.slots) {
+        if (data.slots && data.slots.length) {
             var $types = decoders.$getTypeGroup($('.irps .list'), type);
             for (var index in data.slots) {
                 var appointment = data.slots[index];
