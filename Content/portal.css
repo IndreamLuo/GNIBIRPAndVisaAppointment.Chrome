@@ -12,6 +12,10 @@
 
 }
 
+.group .loading {
+    height: 50px;
+}
+
 .group .list .typegroup {
     position: relative;
     margin-bottom: 5px;
@@ -33,6 +37,12 @@
 
 .group .list .appointment {
     
+}
+
+.group .list .empty {
+    padding: 15px;
+    font-size: 15px;
+    color: red;
 }
 
 .group .appointlink {
