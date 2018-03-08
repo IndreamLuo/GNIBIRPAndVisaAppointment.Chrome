@@ -89,13 +89,30 @@ var targets = [{
 }];
 
 $(document).ready(function () {
+    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+        if (changeInfo.status == 'complete') {
+            chrome.tabs.executeScript(tab.id, {
+                file: 'Content/jquery-3.3.1.min.js'
+            }, function (result) {
+                chrome.tabs.executeScript(tab.id, {
+                    file: 'Content/form-assistant.js'
+                }, function (result) {
+                    chrome.tabs.update(tab.id, {
+                        active: true
+                    }, function (tab) {
+
+                    });
+                });
+            });
+        }
+    });
+
     $('.group .appointlink').click(function () {
         var newURL = $(this).attr('href');
         var newTab = chrome.tabs.create({
             url: newURL,
-            //active: false
-        }, function (tab) {;
-            
+            active: false
+        }, function (tab) {
         });
         return false;
     });
