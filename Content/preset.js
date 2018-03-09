@@ -1,4 +1,10 @@
 var preset = {
+    _applyScript: function (script) {
+        var scriptNode = document.createElement('script');
+        scriptNode.innerHTML = script;
+        window.document.body.appendChild(scriptNode);
+    },
+
     inputs: [],
 
     initialize: function () {
@@ -61,10 +67,16 @@ var preset = {
                 if (isAppointment && inputData.inAppointment || !isAppointment) {
                     var input = document.getElementById(inputData.id);
 
-                    preset.isCheckbox(input) && (input.checked = !preset.isValuedCheckbox(input) ? inputData.value : input.getAttribute('checked-value') == inputData.value)
-                    || (input.value = inputData.value);
+                    preset.isButton(input)
+                    ? (isAppointment
+                        ? preset._applyScript('$(' + input.id + ').click();')
+                        : $(input).click())
+                    : preset.isCheckbox(input) && (input.checked = !preset.isValuedCheckbox(input) ? inputData.value : input.getAttribute('checked-value') == inputData.value)
+                        || (input.value = inputData.value);
 
-                    $(input).change();
+                    isAppointment
+                    ? preset._applyScript('$(' + input.id + ').change();')
+                    : $(input).change();
                 }
             }
         });
@@ -97,6 +109,10 @@ var preset = {
 
     isValuedCheckbox: function (input) {
         return preset.isCheckbox(input) && input.hasAttribute('checked-value') && input.hasAttribute('unchecked-value');
+    },
+
+    isButton: function (input) {
+        return input.nodeName = 'INPUT' && input.type == 'button';
     },
 
     calculateValue: function (input) {
