@@ -21,19 +21,22 @@ var binding = {
             binding.calculateValue(this);
 
             if (!--setupCount) {
-                chrome.storage.local.get(binding.storageKey, function (items) {
-                    var formData = items[binding.storageKey];
-                    
-                    for (var index in formData) {
-                        var inputData = formData[index];
-                        var input = document.getElementById(inputData.id);
+                var url = new URL(window.location.href);
+                if (!url.searchParams.get('clear')) {
+                    chrome.storage.local.get(binding.storageKey, function (items) {
+                        var formData = items[binding.storageKey];
+                        
+                        for (var index in formData) {
+                            var inputData = formData[index];
+                            var input = document.getElementById(inputData.id);
 
-                        (binding.isCheckbox(input) && (input.checked = binding.isValuedCheckbox(input) && input.getAttribute('checked-value') == inputData.value || inputData.value))
-                        || (input.value = inputData.value);
+                            (binding.isCheckbox(input) && (input.checked = binding.isValuedCheckbox(input) && input.getAttribute('checked-value') == inputData.value || inputData.value))
+                            || (input.value = inputData.value);
 
-                        $(input).change();
-                    }
-                });
+                            $(input).change();
+                        }
+                    });
+                }
             }
         });
     },
@@ -164,6 +167,12 @@ var binding = {
         chrome.storage.local.set(update, function () {
             //
         });
+    },
+
+    clear: function () {
+        var url = new URL(window.location.href);
+        url.searchParams.set('clear', 'true');
+        window.location.href = url;
     }
 }
 
@@ -172,5 +181,9 @@ $(document).ready(function () {
 
     $('.buttons .save').click(function () {
         binding.save();
+    });
+
+    $('.buttons .clear').click(function () {
+        binding.clear();
     });
 });
