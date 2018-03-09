@@ -144,7 +144,8 @@ var binding = {
                 && data.push({
                     id: dependant.id,
                     value: binding.isValuedCheckbox(dependant) && dependant.checked
-                        || dependant.value
+                        || dependant.value,
+                    inAppointment: !dependant.hasAttribute('not-in-appointment')
                 })
                 && (marks[dependant.id] = true)
                 || newDependants.push(dependant);

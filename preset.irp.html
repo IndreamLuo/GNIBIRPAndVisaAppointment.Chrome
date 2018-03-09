@@ -32,6 +32,22 @@
                 </td>
             </tr>
             <tr>
+                <td>GNIB Expiry Date</td>
+                <td>
+                    <select id="GNIBExDTYY" source="dates.years" unselected-text="YYYY" dependee="ConfirmGNIB" valid-when="ConfirmGNIB.checked" not-in-appointment></select>
+                    <select id="GNIBExDTMM" source="dates.getMonths(GNIBExDTYY.value)" unselected-text="MM" dependee="[ConfirmGNIB, GNIBExDTYY]" valid-when="GNIBExDTYY.value" not-in-appointment></select>
+                    <select id="GNIBExDTDD" source="dates.getMonths(GNIBExDTYY.value)[GNIBExDTMM.value]" unselected-text="DD" dependee="[ConfirmGNIB, GNIBExDTYY, GNIBExDTMM]" valid-when="GNIBExDTYY.value && GNIBExDTMM.value" not-in-appointment></select>
+                    <input id="GNIBExDT" type="hidden" dependee="[ConfirmGNIB, GNIBExDTDD, GNIBExDTMM, GNIBExDTYY]" calculated-value="GNIBExDTDD.value && GNIBExDTMM.value && GNIBExDTYY.value && [GNIBExDTDD.value, GNIBExDTMM.value, GNIBExDTYY.value].join('/')" />
+                </td>
+            </tr>
+            <tr>
+                <td>Declaration</td>
+                <td>
+                    <input id="UsrDeclaration" type="checkbox" dependee="ConfirmGNIB" valid-when="!ConfirmGNIB.disabled" />
+                    I confirm that all of the above statements are true.
+                </td>
+            </tr>
+            <tr>
                 <td>Given Name</td>
                 <td>
                     <input id="GivenName" type="text" />
@@ -46,9 +62,9 @@
             <tr>
                 <td>Date of Birth</td>
                 <td>
-                    <select id="DOBYY" source="dates.years" unselected-text="YYYY"></select>
-                    <select id="DOBMM" source="dates.getMonths(DOBYY.value)" unselected-text="MM" dependee="DOBYY" valid-when="DOBYY.value"></select>
-                    <select id="DOBDD" source="dates.getMonths(DOBYY.value)[DOBMM.value]" unselected-text="DD" dependee="[DOBYY, DOBMM]" valid-when="DOBYY.value && DOBMM.value"></select>
+                    <select id="DOBYY" source="dates.years" unselected-text="YYYY" not-in-appointment></select>
+                    <select id="DOBMM" source="dates.getMonths(DOBYY.value)" unselected-text="MM" dependee="DOBYY" valid-when="DOBYY.value" not-in-appointment></select>
+                    <select id="DOBDD" source="dates.getMonths(DOBYY.value)[DOBMM.value]" unselected-text="DD" dependee="[DOBYY, DOBMM]" valid-when="DOBYY.value && DOBMM.value" not-in-appointment></select>
                     <input id="DOB" type="hidden" dependee="[DOBDD, DOBMM, DOBYY]" calculated-value="DOBDD.value && DOBMM.value && DOBYY.value && [DOBDD.value, DOBMM.value, DOBYY.value].join('/')" />
                 </td>
             </tr>
