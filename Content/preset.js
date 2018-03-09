@@ -2,7 +2,10 @@ var binding = {
     inputs: [],
 
     initialize: function () {
+        binding.formType = $('.form').attr('form-type');
+
         var $inputs = $('input, select');
+
         $inputs.each(function () {
             binding.inputs.push(this);
 
@@ -128,6 +131,12 @@ var binding = {
    
     save: function () {
         var data = binding.collectData();
+        var update = {};
+        var key = binding.formType + '-form-preset';
+        update[key] = data;
+        chrome.storage.local.set(update, function () {
+            //
+        });
     }
 }
 
@@ -136,7 +145,5 @@ $(document).ready(function () {
 
     $('.buttons .save').click(function () {
         binding.save();
-        
-        return false;
     });
 });
