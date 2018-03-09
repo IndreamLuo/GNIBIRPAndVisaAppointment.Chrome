@@ -26,7 +26,12 @@ var binding = {
                     
                     for (var index in formData) {
                         var inputData = formData[index];
-                        document.getElementById(inputData.id).value = inputData.value;
+                        var input = document.getElementById(inputData.id);
+
+                        (binding.isCheckbox(input) && (input.checked = binding.isValuedCheckbox(input) && input.getAttribute('checked-value') == inputData.value || inputData.value))
+                        || (input.value = inputData.value);
+
+                        $(input).change();
                     }
                 });
             }
@@ -38,7 +43,7 @@ var binding = {
     },
 
     setInput: function (input) {
-        if (input.type == 'checkbox') {
+        if (binding.isCheckbox(input)) {
             var checkedValue = input.getAttribute('checked-value');
             var uncheckedValue = input.getAttribute('unchecked-value');
 
@@ -52,6 +57,14 @@ var binding = {
                 setCheckboxValue(this, checkedValue, uncheckedValue);
             });
         }
+    },
+
+    isCheckbox: function (input) {
+        return input.nodeName == 'INPUT' && input.type == 'checkbox';
+    },
+
+    isValuedCheckbox: function (input) {
+        return binding.isCheckbox(input) && !input.hasAttribute('checked-value') && !input.hasAttribute('unchecked-value');
     },
 
     calculateValue: function (input) {
@@ -130,7 +143,8 @@ var binding = {
                 })())
                 && data.push({
                     id: dependant.id,
-                    value: dependant.value
+                    value: binding.isValuedCheckbox(dependant) && dependant.checked
+                        || dependant.value
                 })
                 && (marks[dependant.id] = true)
                 || newDependants.push(dependant);
