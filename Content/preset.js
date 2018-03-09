@@ -3,9 +3,11 @@ var binding = {
 
     initialize: function () {
         binding.formType = $('.form').attr('form-type');
+        binding.storageKey = binding.formType + '-form-preset';
 
         var $inputs = $('input, select');
 
+        var setupCount = $inputs.length;
         $inputs.each(function () {
             binding.inputs.push(this);
 
@@ -17,6 +19,17 @@ var binding = {
             || binding.setInput(this);
 
             binding.calculateValue(this);
+
+            if (!--setupCount) {
+                chrome.storage.local.get(binding.storageKey, function (items) {
+                    var formData = items[binding.storageKey];
+                    
+                    for (var index in formData) {
+                        var inputData = formData[index];
+                        document.getElementById(inputData.id).value = inputData.value;
+                    }
+                });
+            }
         });
     },
 
@@ -132,8 +145,7 @@ var binding = {
     save: function () {
         var data = binding.collectData();
         var update = {};
-        var key = binding.formType + '-form-preset';
-        update[key] = data;
+        update[binding.storageKey] = data;
         chrome.storage.local.set(update, function () {
             //
         });
