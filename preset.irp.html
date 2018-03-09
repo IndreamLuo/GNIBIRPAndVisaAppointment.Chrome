@@ -18,14 +18,14 @@
             <tr>
                 <td>Sub Category</td>
                 <td>
-                    <select id="SubCategory" source="irp.categories[Category.value]" depend-on="Category" valid-when="Category.value"></select>
+                    <select id="SubCategory" source="irp.categories[Category.value]" dependee="Category" valid-when="Category.value"></select>
                 </td>
             </tr>
             <tr>
                 <td>Last IRP/GNIB</td>
                 <td>
-                    <input id="ConfirmGNIB" type="checkbox" checked-value="Yes" unchecked-value="No" />
-                    <input id="GNIBNo" type="text" depend-on='Category' valid-when="ConfirmGNIB.checked" />
+                    <input id="ConfirmGNIB" type="checkbox" checked-value="YES" unchecked-value="NO" />
+                    <input id="GNIBNo" type="text" dependee='ConfirmGNIB' valid-when="ConfirmGNIB.checked" />
                 </td>
             </tr>
             <tr>
@@ -44,9 +44,9 @@
                 <td>Date of Birth</td>
                 <td>
                     <select id="DOBYY" source="dates.years" unselected-text="YYYY"></select>
-                    <select id="DOBMM" source="dates.getMonths(DOBYY.value)" unselected-text="MM" depend-on="DOBYY" valid-when="DOBYY.value"></select>
-                    <select id="DOBDD" source="dates.getMonths(DOBYY.value)[DOBMM.value]" unselected-text="DD" depend-on="[DOBYY, DOBMM]" valid-when="DOBYY.value && DOBMM.value"></select>
-                    <input id="DOB" type="hidden" depend-on="[DOBDD, DOBMM, DOBYY]" />
+                    <select id="DOBMM" source="dates.getMonths(DOBYY.value)" unselected-text="MM" dependee="DOBYY" valid-when="DOBYY.value"></select>
+                    <select id="DOBDD" source="dates.getMonths(DOBYY.value)[DOBMM.value]" unselected-text="DD" dependee="[DOBYY, DOBMM]" valid-when="DOBYY.value && DOBMM.value"></select>
+                    <input id="DOB" type="hidden" dependee="[DOBDD, DOBMM, DOBYY]" calculated-value="DOBDD.value && DOBMM.value && DOBYY.value && [DOBDD.value, DOBMM.value, DOBYY.value].join('/')" />
                 </td>
             </tr>
             <tr>
@@ -70,15 +70,15 @@
             <tr>
                 <td>Family Applicant(s)</td>
                 <td>
-                    <input id="FamAppYN" type="checkbox" checked-value="Yes" unchecked-value="No" />
-                    <select id="FamAppNo" source="irp.familyNumbers" depend-on='FamAppYN' valid-when="FamAppYN.checked"></select>
+                    <input id="FamAppYN" type="checkbox" checked-value="YES" unchecked-value="NO" />
+                    <select id="FamAppNo" source="irp.familyNumbers" dependee='FamAppYN' valid-when="FamAppYN.checked"></select>
                 </td>
             </tr>
             <tr>
                 <td>Current Passport</td>
                 <td>
-                    <input id="PPNoYN" type="checkbox" checked-value="Yes" unchecked-value="No" />
-                    <input id="PPNo" type="text" depend-on='PPNoYN' valid-when="PPNoYN.checked" maxlength="30" />
+                    <input id="PPNoYN" type="checkbox" checked-value="YES" unchecked-value="NO" />
+                    <input id="PPNo" type="text" dependee='PPNoYN' valid-when="PPNoYN.checked" maxlength="30" />
                 </td>
             </tr>
         </table>
