@@ -88,26 +88,34 @@ var targets = [{
     group: groups.irp
 }];
 
+var injectFiles = [
+    'Content/jquery-3.3.1.min.js',
+    'Content/form-assistant.js'
+];
+
 $(document).ready(function () {
     chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
         if (changeInfo.status == 'complete') {
-            chrome.tabs.executeScript(tab.id, {
-                file: 'Content/jquery-3.3.1.min.js'
-            }, function (result) {
+            var fileIndex = 0;
+            var injectFile = function () {
                 chrome.tabs.executeScript(tab.id, {
-                    file: 'Content/form-assistant.js'
+                    file: injectFiles[fileIndex++]
                 }, function (result) {
-                    chrome.tabs.update(tab.id, {
-                        active: true
-                    }, function (tab) {
-
-                    });
+                    injectFiles[fileIndex]
+                    && !injectFile()
+                    || (function () {
+                        chrome.tabs.update(tab.id, {
+                            active: true
+                        });
+                    })();
                 });
-            });
+            }
+
+            injectFile();
         }
     });
 
-    $('.group .appointlink').click(function () {
+    $('.group .appoint').click(function () {
         var newURL = $(this).attr('href');
         var newTab = chrome.tabs.create({
             url: newURL,

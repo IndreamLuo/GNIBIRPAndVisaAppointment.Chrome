@@ -1,0 +1,94 @@
+<html>
+    <head>
+        <script type="text/javascript" src="Content/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="Content/dates.js"></script>
+        <script type="text/javascript" src="Content/irp.js"></script>
+        <script type="text/javascript" src="Content/preset.js"></script>
+        <link type="text/css" rel="stylesheet" href="Content/master.css" />
+        <link type="text/css" rel="stylesheet" href="Content/preset.css" />
+    </head>
+    <body>
+        <table class="form">
+            <tr>
+                <td>Category</td>
+                <td>
+                    <select id="Category" source="irp.categories"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>Sub Category</td>
+                <td>
+                    <select id="SubCategory" source="irp.categories[Category.value]" depend-on="Category" valid-when="Category.value"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>Last IRP/GNIB</td>
+                <td>
+                    <input id="ConfirmGNIB" type="checkbox" checked-value="Yes" unchecked-value="No" />
+                    <input id="GNIBNo" type="text" depend-on='Category' valid-when="ConfirmGNIB.checked" />
+                </td>
+            </tr>
+            <tr>
+                <td>Given Name</td>
+                <td>
+                    <input id="GivenName" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>Surname</td>
+                <td>
+                    <input id="SurName" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>Date of Birth</td>
+                <td>
+                    <select id="DOBYY" source="dates.years" unselected-text="YYYY"></select>
+                    <select id="DOBMM" source="dates.getMonths(DOBYY.value)" unselected-text="MM" depend-on="DOBYY" valid-when="DOBYY.value"></select>
+                    <select id="DOBDD" source="dates.getMonths(DOBYY.value)[DOBMM.value]" unselected-text="DD" depend-on="[DOBYY, DOBMM]" valid-when="DOBYY.value && DOBMM.value"></select>
+                    <input id="DOB" type="hidden" depend-on="[DOBDD, DOBMM, DOBYY]" />
+                </td>
+            </tr>
+            <tr>
+                <td>Nationality</td>
+                <td>
+                    <select id="Nationality" source="irp.nationalities"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>E-mail</td>
+                <td>
+                    <input id="Email" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>Confirm E-mail</td>
+                <td>
+                    <input id="EmailConfirm" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td>Family Applicant(s)</td>
+                <td>
+                    <input id="FamAppYN" type="checkbox" checked-value="Yes" unchecked-value="No" />
+                    <select id="FamAppNo" source="irp.familyNumbers" depend-on='FamAppYN' valid-when="FamAppYN.checked"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>Current Passport</td>
+                <td>
+                    <input id="PPNoYN" type="checkbox" checked-value="Yes" unchecked-value="No" />
+                    <input id="PPNo" type="text" depend-on='PPNoYN' valid-when="PPNoYN.checked" maxlength="30" />
+                </td>
+            </tr>
+        </table>
+        <div class="buttons">
+            <a class="button save" target="_self" href="portal.html">
+                Save
+            </a>
+            <a class="button cancel" target="_self" href="portal.html">
+                Cancel
+            </a>
+        </div>
+    </body>
+</html>

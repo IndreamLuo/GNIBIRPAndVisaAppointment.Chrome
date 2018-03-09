@@ -1,0 +1,40 @@
+.form {
+    margin-bottom: 25px;
+}
+
+.form tr td:first-child {
+    display: inline-block;
+    width: 150px;
+    padding: 5px;
+    text-align: right;
+}
+
+.form tr td:first-child::after {
+    content: ' : '
+}
+
+.form tr td:last-child {
+    width: 150px;
+    padding: 5px;
+    text-align: left;
+}
+
+.form input[type=text] {
+    width: 150px;
+}
+
+.form input[type=checkbox] + input[type=text] {
+    width: 125px;
+}
+
+.buttons {
+    text-align: right;
+}
+
+.save {
+    background-color: #449d44;
+}
+
+.cancel {
+    background-color: #d9534f;
+}

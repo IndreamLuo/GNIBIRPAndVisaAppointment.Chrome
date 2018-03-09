@@ -1,0 +1,15 @@
+.button {
+    display: inline-block;
+    width: 80px;
+    padding: 10;
+    text-align: center;
+    color: white;
+    font-size: 15px;
+    text-decoration: none;
+    background-color: #999;
+    margin-right: 10px;
+}
+
+.button:hover {
+    opacity: 0.7;
+}

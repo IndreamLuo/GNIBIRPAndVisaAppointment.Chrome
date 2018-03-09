@@ -45,13 +45,10 @@
     color: red;
 }
 
-.group .appointlink {
-    display: block;
-    width: 150px;
-    padding: 10;
+.group .appoint {
     background-color: #449d44;
-    text-align: center;
-    color: white;
-    font-size: 15px;
-    text-decoration: none;
+}
+
+.group .preset {
+    background-color: #31b0d5;
 }
