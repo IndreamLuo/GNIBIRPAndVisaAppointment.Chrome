@@ -1,3 +1,8 @@
+.header {
+    font-size: 20;
+    font-weight: bold;
+}
+
 .button {
     display: inline-block;
     width: 80px;
