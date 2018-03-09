@@ -11,7 +11,7 @@
         <div class="header">
             GNIB / IRP Appointment:
         </div>
-        <table class="form" form-type="irp">
+        <table class="form" form-type="irp" is-preset="true">
             <tr>
                 <td>Category</td>
                 <td>
@@ -27,7 +27,7 @@
             <tr>
                 <td>Last IRP/GNIB</td>
                 <td>
-                    <input id="ConfirmGNIB" type="checkbox" checked-value="YES" unchecked-value="NO" />
+                    <input id="ConfirmGNIB" type="checkbox" checked-value="Renewal" unchecked-value="New" />
                     <input id="GNIBNo" type="text" dependee='ConfirmGNIB' valid-when="ConfirmGNIB.checked" />
                 </td>
             </tr>
@@ -89,14 +89,14 @@
             <tr>
                 <td>Family Applicant(s)</td>
                 <td>
-                    <input id="FamAppYN" type="checkbox" checked-value="YES" unchecked-value="NO" />
+                    <input id="FamAppYN" type="checkbox" checked-value="Yes" unchecked-value="No" />
                     <select id="FamAppNo" source="irp.familyNumbers" dependee='FamAppYN' valid-when="FamAppYN.checked"></select>
                 </td>
             </tr>
             <tr>
                 <td>Current Passport</td>
                 <td>
-                    <input id="PPNoYN" type="checkbox" checked-value="YES" unchecked-value="NO" />
+                    <input id="PPNoYN" type="checkbox" checked-value="Yes" unchecked-value="No" />
                     <input id="PPNo" type="text" dependee='PPNoYN' valid-when="PPNoYN.checked" maxlength="30" />
                 </td>
             </tr>

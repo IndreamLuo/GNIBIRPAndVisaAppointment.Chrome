@@ -90,6 +90,7 @@ var targets = [{
 
 var injectFiles = [
     'Content/jquery-3.3.1.min.js',
+    'Content/preset.js',
     'Content/form-assistant.js'
 ];
 

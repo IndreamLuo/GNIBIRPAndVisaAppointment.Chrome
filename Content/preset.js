@@ -1,52 +1,81 @@
-var binding = {
+var preset = {
     inputs: [],
 
     initialize: function () {
-        binding.formType = $('.form').attr('form-type');
-        binding.storageKey = binding.formType + '-form-preset';
+        if ($('.form').attr('is-preset')) {
+            preset.initializePreset();
+    
+            $('.buttons .save').click(function () {
+                preset.save();
+            });
+    
+            $('.buttons .clear').click(function () {
+                preset.clear();
+            });
+        } else {
+            preset.initializeAppointment();
+        }
+    },
+
+    initializePreset: function () {
+        preset.formType = $('.form').attr('form-type');
+        preset.storageKey = preset.formType + '-form-preset';
 
         var $inputs = $('input, select');
 
         var setupCount = $inputs.length;
         $inputs.each(function () {
-            binding.inputs.push(this);
+            preset.inputs.push(this);
 
             var dependee = eval(this.getAttribute('dependee'));
 
             dependee
-            && (binding.setDependee(this, dependee) || true)
-            || this.nodeName == 'SELECT' && binding.setSelect(this)
-            || binding.setInput(this);
+            && (preset.setDependee(this, dependee) || true)
+            || this.nodeName == 'SELECT' && preset.setSelect(this)
+            || preset.setInput(this);
 
-            binding.calculateValue(this);
+            preset.calculateValue(this);
 
             if (!--setupCount) {
                 var url = new URL(window.location.href);
                 if (!url.searchParams.get('clear')) {
-                    chrome.storage.local.get(binding.storageKey, function (items) {
-                        var formData = items[binding.storageKey];
-                        
-                        for (var index in formData) {
-                            var inputData = formData[index];
-                            var input = document.getElementById(inputData.id);
+                    preset.resumeForm(false);
+                }
+            }
+        });
+    },
 
-                            (binding.isCheckbox(input) && (input.checked = binding.isValuedCheckbox(input) && input.getAttribute('checked-value') == inputData.value || inputData.value))
-                            || (input.value = inputData.value);
+    initializeAppointment: function () {
+        preset.formType = presetFormType;
+        preset.storageKey = preset.formType + '-form-preset';
 
-                            $(input).change();
-                        }
-                    });
+        preset.resumeForm(true);
+    },
+
+    resumeForm: function (isAppointment) {
+        chrome.storage.local.get(preset.storageKey, function (items) {
+            var formData = items[preset.storageKey];
+            
+            for (var index in formData) {
+                var inputData = formData[index];
+                if (isAppointment && inputData.inAppointment || !isAppointment) {
+                    var input = document.getElementById(inputData.id);
+
+                    preset.isCheckbox(input) && (input.checked = !preset.isValuedCheckbox(input) ? inputData.value : input.getAttribute('checked-value') == inputData.value)
+                    || (input.value = inputData.value);
+
+                    $(input).change();
                 }
             }
         });
     },
 
     setSelect: function (select) {
-        binding.setSelectOptions(select);
+        preset.setSelectOptions(select);
     },
 
     setInput: function (input) {
-        if (binding.isCheckbox(input)) {
+        if (preset.isCheckbox(input)) {
             var checkedValue = input.getAttribute('checked-value');
             var uncheckedValue = input.getAttribute('unchecked-value');
 
@@ -67,7 +96,7 @@ var binding = {
     },
 
     isValuedCheckbox: function (input) {
-        return binding.isCheckbox(input) && !input.hasAttribute('checked-value') && !input.hasAttribute('unchecked-value');
+        return preset.isCheckbox(input) && input.hasAttribute('checked-value') && input.hasAttribute('unchecked-value');
     },
 
     calculateValue: function (input) {
@@ -82,8 +111,8 @@ var binding = {
 
             if (validWhen || validWhen == null) {
                 input.disabled = null;
-                select && binding.setSelectOptions(select);
-                binding.calculateValue(input);
+                select && preset.setSelectOptions(select);
+                preset.calculateValue(input);
             } else {
                 input.disabled = 'disable';
             }
@@ -122,7 +151,7 @@ var binding = {
         var marks = {};
         var dependants = [];
 
-        var currentDependants = binding.inputs;
+        var currentDependants = preset.inputs;
         while (Object.keys(currentDependants).length) {
             var newDependants = [];
 
@@ -146,8 +175,9 @@ var binding = {
                 })())
                 && data.push({
                     id: dependant.id,
-                    value: binding.isValuedCheckbox(dependant) && dependant.checked
-                        || dependant.value,
+                    value: (preset.isCheckbox(dependant) && !preset.isValuedCheckbox(dependant))
+                        ? dependant.checked
+                        : dependant.value,
                     inAppointment: !dependant.hasAttribute('not-in-appointment')
                 })
                 && (marks[dependant.id] = true)
@@ -161,9 +191,9 @@ var binding = {
     },
    
     save: function () {
-        var data = binding.collectData();
+        var data = preset.collectData();
         var update = {};
-        update[binding.storageKey] = data;
+        update[preset.storageKey] = data;
         chrome.storage.local.set(update, function () {
             //
         });
@@ -177,13 +207,5 @@ var binding = {
 }
 
 $(document).ready(function () {
-    binding.initialize();
-
-    $('.buttons .save').click(function () {
-        binding.save();
-    });
-
-    $('.buttons .clear').click(function () {
-        binding.clear();
-    });
+    preset.initialize();
 });
