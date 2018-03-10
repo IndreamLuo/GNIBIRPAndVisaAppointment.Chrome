@@ -56,6 +56,8 @@ var preset = {
         preset.storageKey = preset.formType + '-form-preset';
 
         preset.resumeForm(true);
+
+        preset._applyScript('$(document.body).animate({ scrollTop: $(document).height() }, "slow");');
     },
 
     resumeForm: function (isAppointment) {
