@@ -23,3 +23,14 @@
 .button:hover {
     opacity: 0.7;
 }
+
+.waiting {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #99999999;
+    z-index: 10;
+    display: none;
+}

@@ -55,15 +55,23 @@ var preset = {
         preset.formType = presetFormType;
         preset.storageKey = preset.formType + '-form-preset';
 
-        preset.resumeForm(true);
+        preset.resumeForm(true, function () {
+            var url = new URL(window.location.href);
+            var bookit = url.searchParams.get('bookit');
+            
+            if (bookit) {
+                setTimeout(() => {
+                    preset._applyScript('$("button[onclick*=' + bookit + ']").click();');
+                    //preset._applyScript('$(btSub).click();');
+                }, 100);
+            }
+        });
 
         preset._applyScript('$(document.body).animate({ scrollTop: $(document).height() }, "slow");');
     },
 
-    resumeForm: function (isAppointment) {
-        chrome.storage.local.get(preset.storageKey, function (items) {
-            var formData = items[preset.storageKey];
-            
+    resumeForm: function (isAppointment, callback) {
+        formStorage.retrieve(preset.storageKey, function (formData) {
             for (var index in formData) {
                 var inputData = formData[index];
                 if (isAppointment && inputData.inAppointment || !isAppointment) {
@@ -81,6 +89,8 @@ var preset = {
                     : $(input).change();
                 }
             }
+
+            callback && callback();
         });
     },
 
@@ -210,9 +220,7 @@ var preset = {
    
     save: function () {
         var data = preset.collectData();
-        var update = {};
-        update[preset.storageKey] = data;
-        chrome.storage.local.set(update, function () {
+        formStorage.save(preset.storageKey, data, function () {
             //
         });
     },
