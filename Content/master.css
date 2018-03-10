@@ -3,6 +3,11 @@
     font-weight: bold;
 }
 
+.information {
+    padding: 15px;
+    background-color: #F0FFF0
+}
+
 .button {
     display: inline-block;
     width: 80px;

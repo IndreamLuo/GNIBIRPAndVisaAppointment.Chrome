@@ -3,13 +3,17 @@
         <script type="text/javascript" src="Content/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="Content/dates.js"></script>
         <script type="text/javascript" src="Content/irp.js"></script>
-        <script type="text/javascript" src="Content/preset.js"></script>
         <link type="text/css" rel="stylesheet" href="Content/master.css" />
+
+        <script type="text/javascript" src="Content/preset.js"></script>
         <link type="text/css" rel="stylesheet" href="Content/preset.css" />
     </head>
     <body>
         <div class="header">
             GNIB / IRP Appointment:
+        </div>
+        <div class="information">
+            Your preset selections will be filled in automatically in appointment.<br />
         </div>
         <table class="form" form-type="irp" is-preset="true">
             <tr>
@@ -100,14 +104,10 @@
                     <input id="PPNo" type="text" dependee='PPNoYN' valid-when="PPNoYN.checked" maxlength="30" />
                 </td>
             </tr>
-            <tr>
-                <td>
-                    <input id="btLook4App" type="hidden" />
-                    <input id="AppSelectChoice" type="hidden" value="S" />
-                    <input id="btSrch4Apps" type="hidden" />
-                </td>
-            </tr>
         </table>
+        <input id="btLook4App" type="hidden" />
+        <input id="AppSelectChoice" type="hidden" value="S" />
+        <input id="btSrch4Apps" type="hidden" />
         <div class="buttons">
             <a class="button save" target="_self" href="portal.html">
                 Save
