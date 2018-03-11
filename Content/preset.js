@@ -1,10 +1,4 @@
 var preset = {
-    _applyScript: function (script) {
-        var scriptNode = document.createElement('script');
-        scriptNode.innerHTML = script;
-        window.document.body.appendChild(scriptNode);
-    },
-
     inputs: [],
 
     initialize: function () {
@@ -54,20 +48,12 @@ var preset = {
     initializeAppointment: function () {
         preset.formType = presetFormType;
         preset.storageKey = preset.formType + '-form-preset';
-
+        
         preset.resumeForm(true, function () {
-            var url = new URL(window.location.href);
-            var bookit = url.searchParams.get('bookit');
             
-            if (bookit) {
-                setTimeout(() => {
-                    preset._applyScript('$("button[onclick*=' + bookit + ']").click();');
-                    //preset._applyScript('$(btSub).click();');
-                }, 100);
-            }
         });
 
-        preset._applyScript('$(document.body).animate({ scrollTop: $(document).height() }, "slow");');
+        formAssistant.applyScript('$(document.body).animate({ scrollTop: $(document).height() }, "slow");');
     },
 
     resumeForm: function (isAppointment, callback) {
@@ -79,14 +65,13 @@ var preset = {
 
                     preset.isButton(input)
                     ? (isAppointment
-                        ? preset._applyScript('$(' + input.id + ').click();')
+                        ? formAssistant.applyScript('$(' + input.id + ').click();')
                         : $(input).click())
-                    : preset.isCheckbox(input) && (input.checked = !preset.isValuedCheckbox(input) ? inputData.value : input.getAttribute('checked-value') == inputData.value)
-                        || (input.value = inputData.value);
-
-                    isAppointment
-                    ? preset._applyScript('$(' + input.id + ').change();')
-                    : $(input).change();
+                    : ((preset.isCheckbox(input) && (input.checked = !preset.isValuedCheckbox(input) ? inputData.value : input.getAttribute('checked-value') == inputData.value)
+                        || (input.value = inputData.value)) || true)
+                        && (isAppointment
+                            ? formAssistant.applyScript('$(' + input.id + ').change();')
+                            : $(input).change());
                 }
             }
 

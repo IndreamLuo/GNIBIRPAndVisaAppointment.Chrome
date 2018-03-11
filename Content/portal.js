@@ -1,6 +1,40 @@
 var appointment = {
+    initialize: function () {
+        chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+            if (changeInfo.status == 'complete') {
+                var fileIndex = 0;
+                var injectFile = function () {
+                    chrome.tabs.executeScript(tab.id, {
+                        file: injectFiles[fileIndex++]
+                    }, function (result) {
+                        injectFiles[fileIndex]
+                        && !injectFile()
+                        || (function () {
+                            var code = ('var selectedTime = "appointment.selectedTime"; (' + function () {
+                                formAssistant.applyScript('var selectedTime = "appointment.selectedTime";');
+                            }.toString() + ')()')
+                            .replace('appointment.selectedTime', appointment.selectedTime)
+                            .replace('appointment.selectedTime', appointment.selectedTime);
+                            chrome.tabs.executeScript(tab.id, {
+                                code: code
+                            }, function (result) {
+                                chrome.tabs.update(tab.id, {
+                                    active: true
+                                });
+                            })
+                        })();
+                    });
+                }
+    
+                injectFile();
+            }
+        });
+    },
+
     appoint: function (clickedInput) {
         var newURL = $(clickedInput).attr('href');
+        var time = $(clickedInput).attr('time');
+        appointment.selectedTime = time;
         $('.waiting').fadeIn('fast', function () {
             var newTab = chrome.tabs.create({
                 url: newURL,
@@ -78,15 +112,15 @@ var decoders = {
 
                     var appointmentElement = document.createElement('div');
                     appointmentElement.setAttribute('class', 'appointment');
-                    appointmentElement.setAttribute('bookit', appointment.id);
 
                     var appointmentContent = isPreset
                     ? document.createElement('a')
                     : document.createElement('span');
 
                     if (isPreset) {
-                        appointmentContent.setAttribute('href', 'https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm&bookit=' + appointment.id);
+                        appointmentContent.setAttribute('href', 'https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm&selected=true');
                         appointmentContent.setAttribute('target', '_blank');
+                        appointmentContent.setAttribute('time', appointment.time);
                         $(appointmentContent).click(function () {
                             window.appointment.appoint(this);
                             return false;
@@ -169,32 +203,13 @@ var targets = [{
 
 var injectFiles = [
     'Content/jquery-3.3.1.min.js',
+    'Content/form-assistant.js',
     'Content/form-storage.js',
-    'Content/preset.js',
-    'Content/form-assistant.js'
+    'Content/preset.js'
 ];
 
 $(document).ready(function () {
-    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-        if (changeInfo.status == 'complete') {
-            var fileIndex = 0;
-            var injectFile = function () {
-                chrome.tabs.executeScript(tab.id, {
-                    file: injectFiles[fileIndex++]
-                }, function (result) {
-                    injectFiles[fileIndex]
-                    && !injectFile()
-                    || (function () {
-                        chrome.tabs.update(tab.id, {
-                            active: true
-                        });
-                    })();
-                });
-            }
-
-            injectFile();
-        }
-    });
+    appointment.initialize();
 
     $('.group .appoint').click(function () {
         appointment.appoint(this);
