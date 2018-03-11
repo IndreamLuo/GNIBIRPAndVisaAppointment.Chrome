@@ -152,9 +152,10 @@ var statusControl = {
         statusControl.loadings[group] = (statusControl.loadings[group] || 0) + 1;
     },
     removeLoading: function (group) {
-        var listSelector = '.' + group + 's .list';
-        $(listSelector + ' .loading').remove();
         statusControl.loadings[group]--;
+
+        var listSelector = '.' + group + 's .list';
+        !statusControl.loadings[group] && $(listSelector + ' .loading').remove();
 
         if (!statusControl.loadings[group] && !$(listSelector + ' .appointment').length) {
             $(listSelector).append('<div class="empty">There\'s no valid appointment.');
