@@ -105,6 +105,13 @@
                     <input id="PPNoYN" type="checkbox" checked-value="Yes" unchecked-value="No" />
                     <input id="PPNo" type="text" dependee='PPNoYN' valid-when="PPNoYN.checked" maxlength="30" />
                 </td>
+            <tr>
+                <td>
+                    No Passport Reason
+                </td>
+                <td>
+                    <select id="PPReason" source="irp.noPassportReasons" dependee='PPNoYN' valid-when="!PPNoYN.checked"></select>
+                </td>
             </tr>
         </table>
         <input id="btLook4App" type="hidden" />

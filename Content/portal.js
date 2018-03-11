@@ -204,6 +204,7 @@ var targets = [{
 var injectFiles = [
     'Content/jquery-3.3.1.min.js',
     'Content/form-assistant.js',
+    'Content/form-injected.js',
     'Content/form-storage.js',
     'Content/preset.js'
 ];

@@ -6,7 +6,7 @@
 .form tr td:first-child {
     display: inline-block;
     width: 150px;
-    padding: 5px;
+    padding: 4px;
     text-align: right;
 }
 
@@ -16,7 +16,7 @@
 
 .form tr td:last-child {
     width: 150px;
-    padding: 5px;
+    padding: 4px;
     text-align: left;
 }
 
