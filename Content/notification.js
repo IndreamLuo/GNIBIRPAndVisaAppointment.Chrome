@@ -17,15 +17,25 @@ var notification = {
                     if (chrome.runtime.lastError) {
                         console.log('gcm register error:' + chrome.runtime.lastError);
                     } else {
-                        //Should sent the result(token) to service by here
-                        //
-
-                        chrome.gcm.onMessage.addListener(function (message) {
-                            var newNotification = new notification.notificationBase(message['title'], message['information']);
-                            chrome.notification.create(newNotification)
+                        formStorage.retrieve(type + '-form-preset', function (data) {
+                            $.ajax({
+                                url: 'https://gnibandvisa.azurewebsites.net/api/SentGCMToken?code=31jgGYB69BKGyPRKDyoneJl/rjbSEo31Sscx8wcY39I1BbDrKygyug==',
+                                method: 'POST',
+                                data: JSON.stringify({
+                                    token: result
+                                }),
+                                dataType: "json",
+                                contentType: 'application/json',
+                                success: function () {
+                                    chrome.gcm.onMessage.addListener(function (message) {
+                                        var newNotification = new notification.notificationBase(message['title'], message['information']);
+                                        chrome.notification.create(newNotification)
+                                    });
+                                    registeredOperation();
+                                }
+                            });
                         });
                     }
-                    registeredOperation();
                 });
             } else {
                 registeredOperation();
