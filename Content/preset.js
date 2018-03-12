@@ -109,7 +109,7 @@ var preset = {
     },
 
     isButton: function (input) {
-        return input.nodeName = 'INPUT' && input.type == 'button';
+        return input.nodeName == 'INPUT' && input.type == 'button';
     },
 
     calculateValue: function (input) {
