@@ -7,7 +7,9 @@
         "https://*/*",
         "tabs",
         "activeTab",
-        "storage"
+        "storage",
+        "gcm",
+        "notifications"
     ],
     "icons": {
         "128": "icon.png"
@@ -16,5 +18,5 @@
         "default_popup": "portal.html",
         "default_icon": "icon.png"
     },
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+    "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.gstatic.com/; object-src 'self'"
 }

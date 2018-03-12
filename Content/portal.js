@@ -235,4 +235,8 @@ $(document).ready(function () {
             });
         })(target);
     }
+
+    $('.notification-switch').each(function () {
+        notification.setSwitch(this);
+    });
 });

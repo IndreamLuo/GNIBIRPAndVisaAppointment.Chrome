@@ -4,8 +4,58 @@
 }
 
 .information {
-    padding: 5px;
+    padding: 20px;
     background-color: #F0FFF0
+}
+
+.information ul {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.form {
+    margin-bottom: 25px;
+    font-size: 13px;
+}
+
+.form tr td:first-child {
+    display: inline-block;
+    width: 150px;
+    padding: 3px;
+    text-align: right;
+}
+
+.form tr td:first-child::after {
+    content: ' : '
+}
+
+.form tr td:last-child {
+    width: 150px;
+    padding: 3px;
+    text-align: left;
+}
+
+.form input[type=text] {
+    width: 150px;
+}
+
+.form input[type=checkbox] + input[type=text] {
+    width: 125px;
+}
+
+.waiting {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #99999999;
+    z-index: 10;
+    display: none;
+}
+
+.buttons {
+    text-align: right;
 }
 
 .button {
@@ -24,13 +74,14 @@
     opacity: 0.7;
 }
 
-.waiting {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #99999999;
-    z-index: 10;
-    display: none;
+.save {
+    background-color: #449d44;
+}
+
+.clear {
+    background-color: #033c73;
+}
+
+.cancel {
+    background-color: #d9534f;
 }
