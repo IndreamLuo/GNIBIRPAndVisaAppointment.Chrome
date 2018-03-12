@@ -27,10 +27,27 @@ var notification = {
                                 dataType: "json",
                                 contentType: 'application/json',
                                 success: function () {
+                                    //Add GCM message listener
                                     chrome.gcm.onMessage.addListener(function (message) {
-                                        var newNotification = new notification.notificationBase(message['title'], message['information']);
-                                        chrome.notification.create(newNotification)
+                                        //Create chrome notification
+                                        chrome.notifications.create('2018', {
+                                            type: "basic",
+                                            iconUrl: 'icon.png',
+                                            title: message.data.title,
+                                            message: message.data.information,
+                                            buttons: [{
+                                                title: "Appoint"
+                                            }, {
+                                                title: "Ignore"
+                                            }],
+                                            isClickable: true
+                                        });
+                                        //Listen notification button
+                                        chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
+                                            chrome.notifications.clear(notificationId);
+                                        });
                                     });
+
                                     registeredOperation();
                                 }
                             });
