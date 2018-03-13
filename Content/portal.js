@@ -20,12 +20,12 @@ var appointment = {
             // var tomorrow = new Date(new Date(dates.today).setDate(dates.today.getDate() + 1));
             // var dayAfterTomorrow = new Date(new Date(tomorrow).setDate(tomorrow.getDate() + 1));
             
-            // return {
-            //     dates: [
+            return {
+                dates: [
             //         tomorrow.getDate() + '/' + (tomorrow.getMonth() + 1) + '/' + tomorrow.getFullYear(),
             //         dayAfterTomorrow.getDate() + '/' + (dayAfterTomorrow.getMonth() + 1) + '/' + dayAfterTomorrow.getFullYear()
-            //     ]
-            // }
+                ]
+            };
         },
         group: 'visa'
     }, {

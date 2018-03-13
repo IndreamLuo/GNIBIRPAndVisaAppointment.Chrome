@@ -108,7 +108,7 @@
             <tr>
                 <td>Type of visa</td>
                 <td>
-                    <select id="VisaType" source="visa.visaTypes"></select>
+                    <select id="VisaType" source="visa.visaTypes" dependee="AppointType" valid-when="AppointType.value != 'Emergency'" calculated-value="AppointType.value == 'Emergency' ? 'Single' : AppsNum.value" always-calculate></select>
                 </td>
             </tr>
             <tr>
