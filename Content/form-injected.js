@@ -28,18 +28,23 @@ $(document).ready(function () {
             });
         });
     } else if (selectedTime && typeof Appdate != 'undefined') {
-        //Select time
-        formAssistant.run(function () {
-            $(AppointType).change(function () {
-                Appdate.value = selectedTime;
-                $(Appdate).change();
-            });
-        });
-
         //Click 'Find Appointment Slot'
         autoForm.onComplete(function () {
             formAssistant.run(function () {
-                $('button[onclick*=getAvailApps]').click();
+                if (AppointType.value) {
+                    //Select date
+                    var selectedDate = selectedTime.substring(0, 10);
+                    Appdate.value = selectedDate;
+                    $(Appdate).change();
+                    //Click search
+                    $('button[onclick*=getAvailApps]').click();
+                    var interval = setInterval(function () {
+                        if ($(dvAppOptions).css('display') == 'block') {
+                            selectedTime && $("td:contains(" + selectedTime + ")").parent().find("button").click();
+                            clearInterval(interval);
+                        }
+                    });
+                }
             });
         });
     }

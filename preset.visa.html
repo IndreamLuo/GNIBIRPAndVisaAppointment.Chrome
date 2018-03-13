@@ -76,7 +76,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Appointment Type</td>
+                <td>Applicants Number</td>
                 <td>
                     <select id="AppsNum" source="visa.applicantNumbers" preload-source dependee="AppointType" valid-when="AppointType.value!='Individual'" calculated-value="AppointType.value == 'Individual' ? 1 : AppsNum.value" always-calculate></select>
                 </td>

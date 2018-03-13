@@ -3,7 +3,7 @@ var appointment = {
         return 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/(getApps4DT)?openagent&dt={date}&type={type}&num={number}'
         .replace('{date}', date)
         .replace('{type}', typeInitial)
-        .replace('{number}', number);
+        .replace('{number}', numberOfApplicants);
     },
 
     appointmentAPIs: [{
@@ -17,13 +17,13 @@ var appointment = {
     }, {
         type: 'Emergency',
         getDirectData: function () {
-            // var tomorrow = new Date(new Date(dates.today).setDate(dates.today.getDate() + 1));
-            // var dayAfterTomorrow = new Date(new Date(tomorrow).setDate(tomorrow.getDate() + 1));
+            var tomorrow = new Date(new Date(dates.today).setDate(dates.today.getDate() + 1));
+            var dayAfterTomorrow = new Date(new Date(tomorrow).setDate(tomorrow.getDate() + 1));
             
             return {
                 dates: [
-            //         tomorrow.getDate() + '/' + (tomorrow.getMonth() + 1) + '/' + tomorrow.getFullYear(),
-            //         dayAfterTomorrow.getDate() + '/' + (dayAfterTomorrow.getMonth() + 1) + '/' + dayAfterTomorrow.getFullYear()
+                    tomorrow.getDate() + '/' + (tomorrow.getMonth() + 1) + '/' + tomorrow.getFullYear(),
+                    dayAfterTomorrow.getDate() + '/' + (dayAfterTomorrow.getMonth() + 1) + '/' + dayAfterTomorrow.getFullYear()
                 ]
             };
         },
@@ -113,12 +113,10 @@ var appointment = {
                         },
                         success: function (data, jqXHR, textStatus) {
                             decoders[appointmentAPI.group](appointmentAPI.type, data);
-                            statusControl.removeLoading(appointmentAPI.group);
                         }
                     });
                 } else {
                     decoders[appointmentAPI.group](appointmentAPI.type, appointmentAPI.getDirectData());
-                    statusControl.removeLoading(appointmentAPI.group);
                 }
             })(appointmentAPI);
         }
@@ -223,12 +221,23 @@ var decoders = {
 
                 var $types = decoders.$getTypeGroup($list, type);
                 for (var index in data.dates) {
-                    var appointment = data.dates[index];
+                    var date = data.dates[index];
 
-                    $types
-                        .append(decoders._getAppointmentDiv('visa', appointment, isPreset, 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/AppointmentSelection?OpenForm'));
+                    statusControl.addLoading('visa');
+                    $.ajax({
+                        url: appointment.getVisaAppointmentTimeOfDateAPI(date, type[0], 1),
+                        success: function (data) {
+                            data && data.slots && data.slots.forEach(slot => {
+                                $types.append(decoders._getAppointmentDiv('visa', slot.time, isPreset, 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/AppointmentSelection?OpenForm'));
+                            });
+
+                            statusControl.removeLoading('visa');
+                        }
+                    });
                 }
             }
+
+            statusControl.removeLoading('visa');
         });
     },
 
@@ -245,10 +254,11 @@ var decoders = {
                 for (var index in data.slots) {
                     var appointment = data.slots[index];
                     
-                    $types
-                        .append(decoders._getAppointmentDiv('irp', appointment.time, isPreset, 'https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm&selected=true'));
+                    $types.append(decoders._getAppointmentDiv('irp', appointment.time, isPreset, 'https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm&selected=true'));
                 }
             }
+
+            statusControl.removeLoading('irp');
         });
     },
 
@@ -271,11 +281,13 @@ var statusControl = {
     removeLoading: function (group) {
         statusControl.loadings[group]--;
 
-        var listSelector = '.' + group + 's .list';
-        !statusControl.loadings[group] && $(listSelector + ' .loading').remove();
+        if (!statusControl.loadings[group]) {
+            var listSelector = '.' + group + 's .list';
+            $(listSelector + ' .loading').remove();
 
-        if (!statusControl.loadings[group] && !$(listSelector + ' .appointment').length) {
-            $(listSelector).append('<div class="empty">There\'s no valid appointment.');
+            if (!$(listSelector + ' .appointment').length) {
+                $(listSelector).append('<div class="empty">There\'s no valid appointment.');
+            }
         }
     }
 };
