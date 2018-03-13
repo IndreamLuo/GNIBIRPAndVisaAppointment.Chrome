@@ -18,8 +18,8 @@ var appointment = {
                                 var code = ('var selectedTime = "appointment.selectedTime"; (' + function () {
                                     formAssistant.applyScript('var selectedTime = "appointment.selectedTime";');
                                 }.toString() + ')()')
-                                .replace('appointment.selectedTime', appointment.selectedTime)
-                                .replace('appointment.selectedTime', appointment.selectedTime);
+                                .replace('appointment.selectedTime', appointment.selectedTime || '')
+                                .replace('appointment.selectedTime', appointment.selectedTime || '');
                                 
                                 chrome.tabs.executeScript(tab.id, {
                                     code: code

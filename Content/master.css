@@ -8,13 +8,13 @@
     background-color: #F0FFF0
 }
 
-.information ul {
+ul, ol {
     margin-top: 0;
     margin-bottom: 0;
 }
 
 .form {
-    margin-bottom: 25px;
+    margin-bottom: 5px;
     font-size: 13px;
 }
 
@@ -39,8 +39,16 @@
     width: 150px;
 }
 
+.form input[type=checkbox] {
+    float: left;
+}
+
 .form input[type=checkbox] + input[type=text] {
     width: 125px;
+}
+
+.form input[type=checkbox] + ol {
+    display: inline-block;
 }
 
 .waiting {

@@ -29,7 +29,6 @@
                 <td>Confirmation</td>
                 <td>
                     <input id="btCom" type="checkbox" />
-                    I confirm that:
                     <ol>
                         <li>I am visa required national</li>
                         <li>I hold a valid IRP or GNIB card</li>
@@ -79,7 +78,19 @@
             <tr>
                 <td>Appointment Type</td>
                 <td>
-                    <select id="AppsNum" source="visa.applicantNumbers" preload-source dependee="AppointType" valid-when="AppointType.value=='Family'" calculated-value="AppointType.value == 'Individual' ? 1 : AppsNum.value" always-calculate></select>
+                    <select id="AppsNum" source="visa.applicantNumbers" preload-source dependee="AppointType" valid-when="AppointType.value!='Individual'" calculated-value="AppointType.value == 'Individual' ? 1 : AppsNum.value" always-calculate></select>
+                </td>
+            </tr>
+            <tr>
+                <td>Emergency Reason</td>
+                <td>
+                    <select id="EmReason" source="visa.emergencyReasons" dependee="AppointType" valid-when="AppointType.value=='Emergency'"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>Contact Telephone</td>
+                <td>
+                    +353 <input id="EmContactNum" dependee="AppointType" valid-when="AppointType.value=='Emergency'" />
                 </td>
             </tr>
             <tr>

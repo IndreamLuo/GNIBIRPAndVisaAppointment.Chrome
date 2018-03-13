@@ -115,7 +115,7 @@ var preset = {
     },
 
     calculateValue: function (input) {
-        input.value = input.hasAttribute('always-calculate') || input.value == null
+        input.value = input.hasAttribute('always-calculate') || !input.value
         ? eval(input.getAttribute('calculated-value'))
         : input.value;
     },
