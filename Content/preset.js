@@ -26,12 +26,14 @@ var preset = {
         var setupCount = $inputs.length;
         $inputs.each(function () {
             preset.inputs.push(this);
-
+            
             var dependee = eval(this.getAttribute('dependee'));
 
+            this.hasAttribute('preload-source') && preset.setSelect(this);
+            
             dependee
             && (preset.setDependee(this, dependee) || true)
-            || this.nodeName == 'SELECT' && preset.setSelect(this)
+            || this.nodeName == 'SELECT' && (preset.setSelect(this) || true)
             || preset.setInput(this);
 
             preset.calculateValue(this);
@@ -109,11 +111,13 @@ var preset = {
     },
 
     isButton: function (input) {
-        return input.nodeName == 'INPUT' && input.type == 'button';
+        return input.nodeName == 'BUTTON' || input.nodeName == 'INPUT' && input.type == 'button';
     },
 
     calculateValue: function (input) {
-        input.value = input.value || eval(input.getAttribute('calculated-value'));
+        input.value = input.hasAttribute('always-calculate') || input.value == null
+        ? eval(input.getAttribute('calculated-value'))
+        : input.value;
     },
 
     setDependee: function (input, dependee) {
@@ -127,6 +131,7 @@ var preset = {
                 select && preset.setSelectOptions(select);
                 preset.calculateValue(input);
             } else {
+                input.hasAttribute('always-calculate') && preset.calculateValue(input);
                 input.disabled = 'disable';
             }
         });

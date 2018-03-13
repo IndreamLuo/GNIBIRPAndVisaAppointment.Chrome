@@ -4,25 +4,32 @@ var appointment = {
             if (changeInfo.status == 'complete') {
                 var fileIndex = 0;
                 var injectFile = function () {
+                    //Set preset form type and selected time
                     chrome.tabs.executeScript(tab.id, {
-                        file: injectFiles[fileIndex++]
+                        code: 'var presetFormType = "' + appointment.tabs[tab.id].type + '";'
                     }, function (result) {
-                        injectFiles[fileIndex]
-                        && !injectFile()
-                        || (function () {
-                            var code = ('var selectedTime = "appointment.selectedTime"; (' + function () {
-                                formAssistant.applyScript('var selectedTime = "appointment.selectedTime";');
-                            }.toString() + ')()')
-                            .replace('appointment.selectedTime', appointment.selectedTime)
-                            .replace('appointment.selectedTime', appointment.selectedTime);
-                            chrome.tabs.executeScript(tab.id, {
-                                code: code
-                            }, function (result) {
-                                chrome.tabs.update(tab.id, {
-                                    active: true
-                                });
-                            })
-                        })();
+                        //Inject files into opened tab
+                        chrome.tabs.executeScript(tab.id, {
+                            file: injectFiles[fileIndex++]
+                        }, function (result) {
+                            injectFiles[fileIndex]
+                            && !injectFile()
+                            || (function () {
+                                var code = ('var selectedTime = "appointment.selectedTime"; (' + function () {
+                                    formAssistant.applyScript('var selectedTime = "appointment.selectedTime";');
+                                }.toString() + ')()')
+                                .replace('appointment.selectedTime', appointment.selectedTime)
+                                .replace('appointment.selectedTime', appointment.selectedTime);
+                                
+                                chrome.tabs.executeScript(tab.id, {
+                                    code: code
+                                }, function (result) {
+                                    chrome.tabs.update(tab.id, {
+                                        active: true
+                                    });
+                                })
+                            })();
+                        });
                     });
                 }
     
@@ -31,15 +38,23 @@ var appointment = {
         });
     },
 
+    tabs: {},
+
     appoint: function (clickedInput) {
-        var newURL = $(clickedInput).attr('href');
-        var time = $(clickedInput).attr('time');
+        var $clickedInput = $(clickedInput);
+        var newURL = $clickedInput.attr('href');
+        var type = $clickedInput.attr('form-type');
+        var time = $clickedInput.attr('time');
         appointment.selectedTime = time;
         $('.waiting').fadeIn('fast', function () {
             var newTab = chrome.tabs.create({
                 url: newURL,
                 active: false
             }, function (tab) {
+                appointment.tabs[tab.id] = {
+                    id: tab.id,
+                    type: type
+                };
             });
         });
     }
@@ -83,6 +98,7 @@ var decoders = {
             }
         }());
     },
+
     visa: function (type, data) {
         decoders.getPreset(function (presets) {
             var $list = decoders.$lists['visa'] || (decoders.$lists['visa'] = $('.visas .list'));
@@ -97,6 +113,7 @@ var decoders = {
             }
         });
     },
+
     irp: function (type, data) {
         decoders.getPreset(function (presets) {
             var $list = decoders.$lists['irp'] || (decoders.$lists['irp'] = $('.irps .list'));
@@ -119,6 +136,7 @@ var decoders = {
 
                     if (isPreset) {
                         appointmentContent.setAttribute('href', 'https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm&selected=true');
+                        appointmentContent.setAttribute('form-type', type);
                         appointmentContent.setAttribute('target', '_blank');
                         appointmentContent.setAttribute('time', appointment.time);
                         $(appointmentContent).click(function () {
@@ -136,7 +154,9 @@ var decoders = {
             }
         });
     },
+
     $lists: {},
+
     $getTypeGroup: function ($list, type) {
         if (!$list.find('[type=' + type + ']').length) {
             !$list.append('<div class="typegroup" type="' + type + '"><div class="type">' + type + '</div></div>');

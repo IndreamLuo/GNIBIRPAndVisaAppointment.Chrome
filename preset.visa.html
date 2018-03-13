@@ -78,7 +78,7 @@
             <tr>
                 <td>Appointment Type</td>
                 <td>
-                    <select id="AppsNum" source="visa.applicantNumbers" dependee="AppointType" valid-when="AppointType.value=='Family'"></select>
+                    <select id="AppsNum" source="visa.applicantNumbers" preload-source dependee="AppointType" valid-when="AppointType.value=='Family'" calculated-value="AppointType.value == 'Individual' ? 1 : AppsNum.value" always-calculate></select>
                 </td>
             </tr>
             <tr>

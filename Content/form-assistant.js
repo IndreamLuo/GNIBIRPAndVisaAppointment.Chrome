@@ -9,5 +9,3 @@ var formAssistant = {
         formAssistant.applyScript('(run());'.replace('run', run.toString()));
     }
 }
-
-var presetFormType = 'irp';
