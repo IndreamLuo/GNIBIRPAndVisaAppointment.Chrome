@@ -136,7 +136,7 @@ var decoders = {
 
                     if (isPreset) {
                         appointmentContent.setAttribute('href', 'https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm&selected=true');
-                        appointmentContent.setAttribute('form-type', type);
+                        appointmentContent.setAttribute('form-type', 'irp');
                         appointmentContent.setAttribute('target', '_blank');
                         appointmentContent.setAttribute('time', appointment.time);
                         $(appointmentContent).click(function () {
