@@ -52,7 +52,7 @@ var preset = {
         preset.storageKey = preset.formType + '-form-preset';
         
         preset.resumeForm(true, function () {
-            
+            autoForm.complete();
         });
 
         formAssistant.applyScript('$(document.body).animate({ scrollTop: $(document).height() }, "slow");');
@@ -115,7 +115,7 @@ var preset = {
     },
 
     calculateValue: function (input) {
-        input.value = input.hasAttribute('always-calculate') || input.value == null
+        input.value = input.hasAttribute('always-calculate') || !input.value
         ? eval(input.getAttribute('calculated-value'))
         : input.value;
     },

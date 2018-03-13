@@ -1,4 +1,6 @@
 var dates = {
+    today: new Date(),
+
     getMonths: function (year) {
         var getMonthsForYear= function (leap) {
             var yearMonthsName = (leap && 'leap' || 'normal') + 'YearMonths';
@@ -27,7 +29,9 @@ var dates = {
         && getMonthsForYear(false)
         || getMonthsForYear(true);
     },
+
     months31: [1, 3, 5, 7, 8, 10, 12],
+
     _getNumberArray: function (start, end) {
         var array = [];
     
