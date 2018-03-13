@@ -99,16 +99,44 @@ var decoders = {
         }());
     },
 
+    _getAppointmentDiv: function (type, time, isPreset, url) {
+        var appointmentElement = document.createElement('div');
+        appointmentElement.setAttribute('class', 'appointment');
+
+        var appointmentContent = isPreset
+        ? document.createElement('a')
+        : document.createElement('span');
+
+        if (isPreset) {
+            appointmentContent.setAttribute('href', url);
+            appointmentContent.setAttribute('form-type', type);
+            appointmentContent.setAttribute('target', '_blank');
+            appointmentContent.setAttribute('time', time);
+            $(appointmentContent).click(function () {
+                window.appointment.appoint(this);
+                return false;
+            })
+        }
+
+        appointmentContent.innerHTML = time;
+        appointmentElement.appendChild(appointmentContent);
+
+        return appointmentElement;
+    },
+
     visa: function (type, data) {
         decoders.getPreset(function (presets) {
             var $list = decoders.$lists['visa'] || (decoders.$lists['visa'] = $('.visas .list'));
 
             if (data.dates && data.dates.length && data.dates[0] != "01/01/1900") {
+                var isPreset = presets.visa.AppointType == type;
+
                 var $types = decoders.$getTypeGroup($list, type);
                 for (var index in data.dates) {
                     var appointment = data.dates[index];
+
                     $types
-                        .append('<div class="appointment">' + appointment + '</div>');
+                        .append(decoders._getAppointmentDiv('visa', appointment, isPreset, 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/AppointmentSelection?OpenForm'));
                 }
             }
         });
@@ -126,30 +154,9 @@ var decoders = {
                 var $types = decoders.$getTypeGroup($list, type);
                 for (var index in data.slots) {
                     var appointment = data.slots[index];
-
-                    var appointmentElement = document.createElement('div');
-                    appointmentElement.setAttribute('class', 'appointment');
-
-                    var appointmentContent = isPreset
-                    ? document.createElement('a')
-                    : document.createElement('span');
-
-                    if (isPreset) {
-                        appointmentContent.setAttribute('href', 'https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm&selected=true');
-                        appointmentContent.setAttribute('form-type', type);
-                        appointmentContent.setAttribute('target', '_blank');
-                        appointmentContent.setAttribute('time', appointment.time);
-                        $(appointmentContent).click(function () {
-                            window.appointment.appoint(this);
-                            return false;
-                        })
-                    }
-
-                    appointmentContent.innerHTML = appointment.time;
-                    appointmentElement.appendChild(appointmentContent);
-
+                    
                     $types
-                        .append(appointmentElement);
+                        .append(decoders._getAppointmentDiv('irp', appointment.time, isPreset, 'https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm&selected=true'));
                 }
             }
         });
