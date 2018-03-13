@@ -1,5 +1,61 @@
 var appointment = {
+    getVisaAppointmentTimeOfDateAPI: function (date, typeInitial, numberOfApplicants) {
+        return 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/(getApps4DT)?openagent&dt={date}&type={type}&num={number}'
+        .replace('{date}', date)
+        .replace('{type}', typeInitial)
+        .replace('{number}', number);
+    },
+
+    appointmentAPIs: [{
+        type: 'Individual',
+        url: 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/(getDTAvail)?openagent&type=I',
+        group: 'visa'
+    }, {
+        type: 'Family',
+        url: 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/(getDTAvail)?openagent&type=F',
+        group: 'visa'
+    }, {
+        type: 'Emergency',
+        getDirectData: function () {
+            // var tomorrow = new Date(new Date(dates.today).setDate(dates.today.getDate() + 1));
+            // var dayAfterTomorrow = new Date(new Date(tomorrow).setDate(tomorrow.getDate() + 1));
+            
+            // return {
+            //     dates: [
+            //         tomorrow.getDate() + '/' + (tomorrow.getMonth() + 1) + '/' + tomorrow.getFullYear(),
+            //         dayAfterTomorrow.getDate() + '/' + (dayAfterTomorrow.getMonth() + 1) + '/' + dayAfterTomorrow.getFullYear()
+            //     ]
+            // }
+        },
+        group: 'visa'
+    }, {
+        type: "Work-New",
+        url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Work&sbcat=All&typ=New",
+        group: 'irp'
+    }, {
+        type: "Work-Renewal",
+        url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Work&sbcat=All&typ=Renewal",
+        group: 'irp'
+    }, {
+        type: "Study-New",
+        url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Study&sbcat=All&typ=New",
+        group: 'irp'
+    }, {
+        type: "Study-Renewal",
+        url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Study&sbcat=All&typ=Renewal",
+        group: 'irp'
+    }, {
+        type: "Other-New",
+        url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Other&sbcat=All&typ=New",
+        group: 'irp'
+    }, {
+        type: "Other-Renewal",
+        url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Other&sbcat=All&typ=Renewal",
+        group: 'irp'
+    }],
+
     initialize: function () {
+        //Inject files and codes when tabs opened
         chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
             if (changeInfo.status == 'complete') {
                 var fileIndex = 0;
@@ -35,6 +91,40 @@ var appointment = {
     
                 injectFile();
             }
+        });
+
+        $('a[class*=appoint]').click(function () {
+            appointment.appoint(this);
+            return false;
+        });
+    
+        for (var index in appointment.appointmentAPIs) {
+            var appointmentAPI = appointment.appointmentAPIs[index];
+
+            statusControl.addLoading(appointmentAPI.group);
+            
+            (function (appointmentAPI) {
+                if (appointmentAPI.url) {
+                    $.ajax({
+                        url: appointmentAPI.url,
+                        type: "GET",
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            var error = jqXHR.errorMessage;
+                        },
+                        success: function (data, jqXHR, textStatus) {
+                            decoders[appointmentAPI.group](appointmentAPI.type, data);
+                            statusControl.removeLoading(appointmentAPI.group);
+                        }
+                    });
+                } else {
+                    decoders[appointmentAPI.group](appointmentAPI.type, appointmentAPI.getDirectData());
+                    statusControl.removeLoading(appointmentAPI.group);
+                }
+            })(appointmentAPI);
+        }
+    
+        $('.notification-switch').each(function () {
+            notification.setSwitch(this);
         });
     },
 
@@ -190,45 +280,6 @@ var statusControl = {
     }
 };
 
-var groups = {
-    visa: 'visa',
-    irp: 'irp'
-};
-
-var targets = [{
-    type: 'Individual',
-    url: 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/(getDTAvail)?openagent&type=I',
-    group: groups.visa
-}, {
-    type: 'Family',
-    url: 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/(getDTAvail)?openagent&type=F',
-    group: groups.visa
-}, {
-    type: "Work-New",
-    url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Work&sbcat=All&typ=New",
-    group: groups.irp
-}, {
-    type: "Work-Renewal",
-    url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Work&sbcat=All&typ=Renewal",
-    group: groups.irp
-}, {
-    type: "Study-New",
-    url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Study&sbcat=All&typ=New",
-    group: groups.irp
-}, {
-    type: "Study-Renewal",
-    url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Study&sbcat=All&typ=Renewal",
-    group: groups.irp
-}, {
-    type: "Other-New",
-    url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Other&sbcat=All&typ=New",
-    group: groups.irp
-}, {
-    type: "Other-Renewal",
-    url: "https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/(getAppsNear)?openpage&cat=Other&sbcat=All&typ=Renewal",
-    group: groups.irp
-}];
-
 var injectFiles = [
     'Content/jquery-3.3.1.min.js',
     'Content/form-assistant.js',
@@ -239,31 +290,4 @@ var injectFiles = [
 
 $(document).ready(function () {
     appointment.initialize();
-
-    $('.group .appoint').click(function () {
-        appointment.appoint(this);
-        return false;
-    });
-
-    for (var index in targets) {
-        var target = targets[index];
-        statusControl.addLoading(target.group);
-        (function (target) {
-            $.ajax({
-                url: target.url,
-                type: "GET",
-                error: function (jqXHR, textStatus, errorThrown) {
-                    var error = jqXHR.errorMessage;
-                },
-                success: function (data, jqXHR, textStatus) {
-                    decoders[target.group](target.type, data);
-                    statusControl.removeLoading(target.group);
-                }
-            });
-        })(target);
-    }
-
-    $('.notification-switch').each(function () {
-        notification.setSwitch(this);
-    });
 });
