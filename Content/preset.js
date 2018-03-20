@@ -36,7 +36,7 @@ var preset = {
             || this.nodeName == 'SELECT' && (preset.setSelect(this) || true)
             || preset.setInput(this);
 
-            preset.calculateValue(this);
+            preset.updateValue(this);
 
             if (!--setupCount) {
                 var url = new URL(window.location.href);
@@ -115,25 +115,27 @@ var preset = {
     },
 
     calculateValue: function (input) {
-        input.value = input.hasAttribute('always-calculate') || !input.value
-        ? eval(input.getAttribute('calculated-value'))
-        : input.value;
+        input.value = eval(input.getAttribute('calculated-value'));
+    },
+
+    updateValue: function (input) {
+        var select = input.nodeName == 'SELECT' && input;
+        var validWhen = eval(input.getAttribute('valid-when'));
+
+        if (validWhen || validWhen == null) {
+            input.disabled = null;
+            select && preset.setSelectOptions(select);
+            preset.calculateValue(input);
+        } else {
+            input.hasAttribute('always-calculate') && preset.calculateValue(input);
+            input.disabled = 'disable';
+        }
     },
 
     setDependee: function (input, dependee) {
         input.disabled = 'disabled';
-        var select = input.nodeName == 'SELECT' && input;
         $(dependee).change(function () {
-            var validWhen = eval(input.getAttribute('valid-when'));
-
-            if (validWhen || validWhen == null) {
-                input.disabled = null;
-                select && preset.setSelectOptions(select);
-                preset.calculateValue(input);
-            } else {
-                input.hasAttribute('always-calculate') && preset.calculateValue(input);
-                input.disabled = 'disable';
-            }
+            preset.updateValue(input);
         });
     },
 
