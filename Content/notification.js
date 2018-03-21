@@ -27,28 +27,30 @@ var notification = {
                                 dataType: "json",
                                 contentType: 'application/json',
                                 success: function () {
-                                    //Add GCM message listener
-                                    chrome.gcm.onMessage.addListener(function (message) {
-                                        //Create chrome notification
-                                        chrome.notifications.create('2018', {
-                                            type: "basic",
-                                            iconUrl: 'icon.png',
-                                            title: message.data.title,
-                                            message: message.data.information,
-                                            buttons: [{
-                                                title: "Appoint"
-                                            }, {
-                                                title: "Ignore"
-                                            }],
-                                            isClickable: true
+                                    formStorage.save("gcmToken", result, function () {
+                                        //Add GCM message listener
+                                        chrome.gcm.onMessage.addListener(function (message) {
+                                            //Create chrome notification
+                                            chrome.notifications.create('2018', {
+                                                type: "basic",
+                                                iconUrl: 'icon.png',
+                                                title: message.data.title,
+                                                message: message.data.information,
+                                                buttons: [{
+                                                    title: "Appoint"
+                                                }, {
+                                                    title: "Ignore"
+                                                }],
+                                                isClickable: true
+                                            });
+                                            //Listen notification button
+                                            chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
+                                                chrome.notifications.clear(notificationId);
+                                            });
                                         });
-                                        //Listen notification button
-                                        chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
-                                            chrome.notifications.clear(notificationId);
-                                        });
-                                    });
 
-                                    registeredOperation();
+                                        registeredOperation();
+                                    });
                                 }
                             });
                         });
@@ -62,7 +64,13 @@ var notification = {
 
     turnOff: function (type) {
         chrome.gcm.unregister(function () {
-            formStorage.save(type + '-notification', false);
+            formStorage.retrieve("gcmToken", function (gcmToken) {
+                var unsubscribeUrl = "https://gnibirpandvisaappointmentservice.azurewebsites.net/api/Unsubscribe/{type}/{key}?code=Ho4tYiGSvGcsQmOtUE77ln9SIB7B2zbrjCZDfWumqltbKRFmPjNlDw==";
+                unsubscribeUrl = unsubscribeUrl.replace("{type}", "GCM").replace("{key}", gcmToken);
+                $.post(unsubscribeUrl, function () {
+                    formStorage.save(type + '-notification', false);
+                })
+            });
         });
     },
 
