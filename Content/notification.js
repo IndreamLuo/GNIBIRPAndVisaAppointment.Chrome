@@ -19,10 +19,10 @@ var notification = {
                     } else {
                         formStorage.retrieve(type + '-form-preset', function (data) {
                             $.ajax({
-                                url: 'https://gnibandvisa.azurewebsites.net/api/SentGCMToken?code=31jgGYB69BKGyPRKDyoneJl/rjbSEo31Sscx8wcY39I1BbDrKygyug==',
+                                url: 'https://gnibirpandvisaappointmentservice.azurewebsites.net/api/Subscribe',
                                 method: 'POST',
                                 data: JSON.stringify({
-                                    token: result
+                                    gcmToken: result
                                 }),
                                 dataType: "json",
                                 contentType: 'application/json',
