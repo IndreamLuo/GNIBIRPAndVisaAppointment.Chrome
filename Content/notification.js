@@ -1,12 +1,26 @@
 var notification = {
     senderId: '164032443416',
 
+    initialize: function () {
+        notification.getStatus("irp", function (on) {
+            on && notification.turnOn("irp");
+        });
+        
+        notification.getStatus("visa", function (on) {
+            on && notification.turnOn("visa");
+        });
+    },
+
     notificationBase: function (title, message) {
         this.type = 'basic';
         this.iconUrl = 'icon.png';
     },
 
     turnOn: function (type) {
+        if (window != chrome.extension.getBackgroundPage()) {
+            return chrome.extension.getBackgroundPage().notification.turnOn();
+        }
+
         formStorage.retrieve('gcm-registered', function (registered) {
             var registeredOperation = function () {
                 formStorage.save(type + '-notification', true);

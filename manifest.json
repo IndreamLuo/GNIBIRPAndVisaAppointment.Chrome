@@ -9,7 +9,8 @@
         "activeTab",
         "storage",
         "gcm",
-        "notifications"
+        "notifications",
+        "background"
     ],
     "icons": {
         "128": "icon.png"
@@ -18,5 +19,8 @@
         "default_popup": "portal.html",
         "default_icon": "icon.png"
     },
+    "background": {
+        "scripts": ["Content/jquery-3.3.1.min.js", "Content/form-storage.js", "Content/notification.js", "background.js"]
+      },
     "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.gstatic.com/; object-src 'self'"
 }

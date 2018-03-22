@@ -123,6 +123,8 @@ var appointment = {
             })(appointmentAPI);
         }
     
+        notification.initialize();
+        
         $('.notification-switch').each(function () {
             notification.setSwitch(this);
         });
