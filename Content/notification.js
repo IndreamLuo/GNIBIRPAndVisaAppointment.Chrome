@@ -1,6 +1,8 @@
 var notification = {
     senderId: '164032443416',
 
+    isListening: false,
+
     initialize: function () {
         notification.getStatus("irp", function (on) {
             on && notification.turnOn("irp");
@@ -22,11 +24,7 @@ var notification = {
         }
 
         formStorage.retrieve('gcm-registered', function (registered) {
-            var registeredOperation = function () {
-                formStorage.save(type + '-notification', true);
-            }
-
-            if (!registered) {
+            if (!notification.isListening) {
                 chrome.gcm.register([notification.senderId], function (result) {
                     if (chrome.runtime.lastError) {
                         console.log('gcm register error:' + chrome.runtime.lastError);
@@ -45,7 +43,7 @@ var notification = {
                                         //Add GCM message listener
                                         chrome.gcm.onMessage.addListener(function (message) {
                                             //Create chrome notification
-                                            chrome.notifications.create('2018', {
+                                            chrome.notifications.create(Date.now() + '', {
                                                 type: "basic",
                                                 iconUrl: 'icon.png',
                                                 title: message.data.title,
@@ -63,26 +61,32 @@ var notification = {
                                             });
                                         });
 
-                                        registeredOperation();
+                                        formStorage.save(type + '-notification', true, function () {
+                                            notification.isListening = true;
+                                        });
                                     });
                                 }
                             });
                         });
                     }
                 });
-            } else {
-                registeredOperation();
             }
         });
     },
 
     turnOff: function (type) {
+        if (window != chrome.extension.getBackgroundPage()) {
+            return chrome.extension.getBackgroundPage().notification.turnOff();
+        }
+
         chrome.gcm.unregister(function () {
             formStorage.retrieve("gcmToken", function (gcmToken) {
                 var unsubscribeUrl = "https://gnibirpandvisaappointmentservice.azurewebsites.net/api/Unsubscribe/{type}/{key}?code=Ho4tYiGSvGcsQmOtUE77ln9SIB7B2zbrjCZDfWumqltbKRFmPjNlDw==";
                 unsubscribeUrl = unsubscribeUrl.replace("{type}", "GCM").replace("{key}", gcmToken);
                 $.post(unsubscribeUrl, function () {
-                    formStorage.save(type + '-notification', false);
+                    formStorage.save(type + '-notification', false, function () {
+                        notification.isListening = false;
+                    });
                 })
             });
         });
