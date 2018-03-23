@@ -12,7 +12,7 @@ var preset = {
             $('.buttons .clear').click(function () {
                 preset.clear();
             });
-        } else {
+        } else if (typeof presetFormType != 'undefined') {
             preset.initializeAppointment();
         }
     },
