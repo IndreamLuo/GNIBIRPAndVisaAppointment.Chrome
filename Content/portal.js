@@ -100,44 +100,6 @@ var appointment = {
 };
 
 var decoders = {
-    getPreset: function (callback) {
-        decoders.presets
-        && decoders.irp && decoders.irp.loaded
-        && decoders.visa && decoders.visa.loaded
-        || decoders._getPresetCallbacks && !decoders._getPresetCallbacks.length
-        ? callback(decoders.presets)
-        : (function () {
-            if (!decoders._getPresetCallbacks) {
-                decoders._getPresetCallbacks = [callback];
-                decoders.presets = {};
-
-                var retrieveData = function (key, callback) {
-                    decoders.presets[key] = {};
-                    formStorage.retrieve(key + '-form-preset', function (data) {
-                        if (data) {
-                            data.forEach(inputData => {
-                                decoders.presets[key][inputData.id] = inputData.value;
-                            });
-                            decoders.presets[key].loaded = true;
-                        }
-                        callback();
-                    });
-                };
-
-                retrieveData('irp', function () {
-                    retrieveData('visa', function () {
-                        var callback;
-                        while (callback = decoders._getPresetCallbacks.shift()) {
-                            callback(decoders.presets);
-                        }
-                    });
-                });
-            } else {
-                decoders._getPresetCallbacks.push(callback);
-            }
-        }());
-    },
-
     _getAppointmentDiv: function (type, time, isPreset, url) {
         var appointmentElement = document.createElement('div');
         appointmentElement.setAttribute('class', 'appointment');
@@ -164,7 +126,7 @@ var decoders = {
     },
 
     visa: function (type, data) {
-        decoders.getPreset(function (presets) {
+        preset.getPreset(function (presets) {
             var $list = decoders.$lists['visa'] || (decoders.$lists['visa'] = $('.visas .list'));
 
             if (data.dates && data.dates.length && data.dates[0] != "01/01/1900") {
@@ -193,7 +155,7 @@ var decoders = {
     },
 
     irp: function (type, data) {
-        decoders.getPreset(function (presets) {
+        preset.getPreset(function (presets) {
             var $list = decoders.$lists['irp'] || (decoders.$lists['irp'] = $('.irps .list'));
 
             if (data.slots && data.slots.length) {

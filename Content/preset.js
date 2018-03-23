@@ -209,6 +209,44 @@ var preset = {
 
         return data;
     },
+
+    getPreset: function (callback) {
+        preset.presets
+        && preset.presets.irp && preset.presets.irp.loaded
+        && preset.presets.visa && preset.presets.visa.loaded
+        || preset._getPresetCallbacks && !preset._getPresetCallbacks.length
+        ? callback(preset.presets)
+        : (function () {
+            if (!preset._getPresetCallbacks) {
+                preset._getPresetCallbacks = [callback];
+                preset.presets = {};
+
+                var retrieveData = function (key, callback) {
+                    preset.presets[key] = {};
+                    formStorage.retrieve(key + '-form-preset', function (data) {
+                        if (data) {
+                            data.forEach(inputData => {
+                                preset.presets[key][inputData.id] = inputData.value;
+                            });
+                            preset.presets[key].loaded = true;
+                        }
+                        callback();
+                    });
+                };
+
+                retrieveData('irp', function () {
+                    retrieveData('visa', function () {
+                        var callback;
+                        while (callback = preset._getPresetCallbacks.shift()) {
+                            callback(preset.presets);
+                        }
+                    });
+                });
+            } else {
+                preset._getPresetCallbacks.push(callback);
+            }
+        }());
+    },
    
     save: function () {
         var data = preset.collectData();

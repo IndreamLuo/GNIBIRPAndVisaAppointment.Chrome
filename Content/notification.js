@@ -20,73 +20,29 @@ var notification = {
         this.iconUrl = 'icon.png';
     },
 
-    turnOn: function (type) {
+    turnOn: function (type, callback) {
         if (window != chrome.extension.getBackgroundPage()) {
-            return chrome.extension.getBackgroundPage().notification.turnOn();
+            return chrome.extension.getBackgroundPage().notification.turnOn(type, callback);
         }
 
         formStorage.retrieve('gcm-registered', function (registered) {
             if (!notification.isListening) {
-                chrome.gcm.register([notification.senderId], function (result) {
+                chrome.gcm.register([notification.senderId], function (gcmToken) {
                     if (chrome.runtime.lastError) {
                         console.log('gcm register error:' + chrome.runtime.lastError);
                     } else {
-                        formStorage.retrieve(type + '-form-preset', function (data) {
+                        preset.getPreset(function () {
                             $.ajax({
                                 url: 'https://gnibirpandvisaappointmentservice.azurewebsites.net/api/Subscribe',
                                 method: 'POST',
                                 data: JSON.stringify({
-                                    gcmToken: result
+                                    gcmToken: gcmToken,
+                                    type: type
                                 }),
                                 dataType: "json",
                                 contentType: 'application/json',
                                 success: function () {
-                                    formStorage.save("gcmToken", result, function () {
-                                        //Add GCM message listener
-                                        chrome.gcm.onMessage.addListener(function (message) {
-                                            //Organize message
-                                            var newNotification = {
-                                                id: Date.now() + '',
-                                                type: message.data.type,
-                                                category: message.data.category,
-                                                subCategory: message.data.subCategory,
-                                                time: message.data.time,
-                                                title: message.data.title,
-                                                message: message.data.message
-                                            };
-
-                                            notification.notifications[newNotification.id] = newNotification;
-
-                                            //Create chrome notification
-                                            chrome.notifications.create(newNotification.id, {
-                                                type: "basic",
-                                                iconUrl: 'icon.png',
-                                                title: newNotification.title,
-                                                message: newNotification.message,
-                                                buttons: [{
-                                                    title: "Appoint"
-                                                }, {
-                                                    title: "Ignore"
-                                                }],
-                                                isClickable: true
-                                            });
-
-                                            //Listen notification button
-                                            chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
-                                                if (buttonIndex == 0) {
-                                                    var clickedNotification = notification.notifications[notificationId];
-                                                    var api = appointmentAPIs[clickedNotification.type.toLowerCase()][clickedNotification.category + (clickedNotification.subCategory ? '-' + clickedNotification.subCategory : '')];
-
-                                                }
-
-                                                chrome.notifications.clear(notificationId);
-                                            });
-                                        });
-
-                                        formStorage.save(type + '-notification', true, function () {
-                                            notification.isListening = true;
-                                        });
-                                    });
+                                    notification.listenGCM(type, gcmToken, callback);
                                 }
                             });
                         });
@@ -96,9 +52,60 @@ var notification = {
         });
     },
 
-    turnOff: function (type) {
+    listenGCM: function (type, gcmToken, callback) {
+        formStorage.save("gcmToken", gcmToken, function () {
+            //Add GCM message listener
+            chrome.gcm.onMessage.addListener(function (message) {
+                //Organize message
+                var newNotification = {
+                    id: Date.now() + '',
+                    type: message.data.type,
+                    category: message.data.category,
+                    subCategory: message.data.subCategory,
+                    time: message.data.time,
+                    title: message.data.title,
+                    message: message.data.message
+                };
+
+                notification.notifications[newNotification.id] = newNotification;
+
+                //Create chrome notification
+                chrome.notifications.create(newNotification.id, {
+                    type: "basic",
+                    iconUrl: 'icon.png',
+                    title: newNotification.title,
+                    message: newNotification.message,
+                    buttons: [{
+                        title: "Appoint"
+                    }, {
+                        title: "Ignore"
+                    }],
+                    isClickable: true
+                });
+
+                //Listen notification button
+                chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
+                    if (buttonIndex == 0) {
+                        var clickedNotification = notification.notifications[notificationId];
+                        var api = appointmentAPIs[clickedNotification.type.toLowerCase()][clickedNotification.category + (clickedNotification.subCategory ? '-' + clickedNotification.subCategory : '')];
+
+                    }
+
+                    chrome.notifications.clear(notificationId);
+                });
+                
+                callback && callback();
+            });
+
+            formStorage.save(type + '-notification', true, function () {
+                notification.isListening = true;
+            });
+        });
+    },
+
+    turnOff: function (type, callback) {
         if (window != chrome.extension.getBackgroundPage()) {
-            return chrome.extension.getBackgroundPage().notification.turnOff();
+            return chrome.extension.getBackgroundPage().notification.turnOff(type, callback);
         }
 
         chrome.gcm.unregister(function () {
@@ -108,6 +115,7 @@ var notification = {
                 $.post(unsubscribeUrl, function () {
                     formStorage.save(type + '-notification', false, function () {
                         notification.isListening = false;
+                        callback && callback();
                     });
                 })
             });
