@@ -5,6 +5,11 @@ var appointmentAPIs = {
         .replace('{type}', typeInitial)
         .replace('{number}', numberOfApplicants);
     },
+
+    appointmentLinks: {
+        irp: 'https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm',
+        visa: 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/AppointmentSelection?OpenForm'
+    },
     
     'visa': {
         'Individual': {

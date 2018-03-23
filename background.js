@@ -1,1 +1,2 @@
+appointment.initialize();
 notification.initialize();

@@ -20,7 +20,25 @@
         "default_icon": "icon.png"
     },
     "background": {
-        "scripts": ["Content/jquery-3.3.1.min.js", "Content/appointment-apis.js", "Content/preset.js", "Content/form-storage.js", "Content/notification.js", "background.js"]
+        "scripts": ["Content/jquery-3.3.1.min.js",
+            "Content/dates.js",
+            "Content/appointment-apis.js",
+            "Content/preset.js",
+            "Content/form-storage.js",
+            "Content/notification.js",
+            "Content/appointment.js",
+            "background.js"]
       },
+    "content_scripts": [{
+        "matches": ["https://*/*"],
+        "js": [
+            "Content/jquery-3.3.1.min.js",
+            "Content/form-assistant.js",
+            "Content/form-injected.js",
+            "Content/form-storage.js",
+            "Content/preset.js"
+        ]
+    }],
+
     "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.gstatic.com/; object-src 'self'"
 }

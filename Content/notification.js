@@ -55,7 +55,7 @@ var notification = {
     listenGCM: function (type, gcmToken, callback) {
         formStorage.save("gcmToken", gcmToken, function () {
             //Add GCM message listener
-            chrome.gcm.onMessage.addListener(function (message) {
+            var messageListener = function (message) {
                 //Organize message
                 var newNotification = {
                     id: Date.now() + '',
@@ -84,23 +84,28 @@ var notification = {
                 });
 
                 //Listen notification button
-                chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
-                    if (buttonIndex == 0) {
-                        var clickedNotification = notification.notifications[notificationId];
-                        var api = appointmentAPIs[clickedNotification.type.toLowerCase()][clickedNotification.category + (clickedNotification.subCategory ? '-' + clickedNotification.subCategory : '')];
-
-                    }
-
-                    chrome.notifications.clear(notificationId);
-                });
+                !chrome.notifications.onButtonClicked.hasListener(notification.listener)
+                && chrome.notifications.onButtonClicked.addListener(notification.listener);
                 
                 callback && callback();
-            });
+            };
+
+            !chrome.gcm.onMessage.hasListener(messageListener) && chrome.gcm.onMessage.addListener(messageListener);
 
             formStorage.save(type + '-notification', true, function () {
                 notification.isListening = true;
             });
         });
+    },
+
+    listener: function (notificationId, buttonIndex) {
+        if (buttonIndex == 0) {
+            var clickedNotification = notification.notifications[notificationId];
+            var api = appointmentAPIs[clickedNotification.type.toLowerCase()][clickedNotification.category + (clickedNotification.subCategory ? '-' + clickedNotification.subCategory : '')];
+            appointment.appoint(clickedNotification.type.toLowerCase(), clickedNotification.time);
+        }
+
+        chrome.notifications.clear(notificationId);
     },
 
     turnOff: function (type, callback) {

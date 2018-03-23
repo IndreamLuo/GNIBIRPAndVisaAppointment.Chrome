@@ -1,104 +1,3 @@
-var appointment = {
-    initialize: function () {
-        //Inject files and codes when tabs opened
-        chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-            if (changeInfo.status == 'complete') {
-                var fileIndex = 0;
-                var injectFile = function () {
-                    //Set preset form type and selected time
-                    chrome.tabs.executeScript(tab.id, {
-                        code: 'var presetFormType = "' + appointment.tabs[tab.id].type + '";'
-                    }, function (result) {
-                        //Inject files into opened tab
-                        chrome.tabs.executeScript(tab.id, {
-                            file: injectFiles[fileIndex++]
-                        }, function (result) {
-                            injectFiles[fileIndex]
-                            && !injectFile()
-                            || (function () {
-                                var code = ('var selectedTime = "appointment.selectedTime"; (' + function () {
-                                    formAssistant.applyScript('var selectedTime = "appointment.selectedTime";');
-                                }.toString() + ')()')
-                                .replace('appointment.selectedTime', appointment.selectedTime || '')
-                                .replace('appointment.selectedTime', appointment.selectedTime || '');
-                                
-                                chrome.tabs.executeScript(tab.id, {
-                                    code: code
-                                }, function (result) {
-                                    chrome.tabs.update(tab.id, {
-                                        active: true
-                                    });
-                                })
-                            })();
-                        });
-                    });
-                }
-    
-                injectFile();
-            }
-        });
-
-        $('a[class*=appoint]').click(function () {
-            appointment.appoint(this);
-            return false;
-        });
-
-        var groups = ['irp', 'visa'];
-        for (var groupIndex in groups) {
-            var group = groups[groupIndex];
-            for (var index in appointmentAPIs[group]) {
-                var appointmentAPI = appointmentAPIs[group][index];
-
-                statusControl.addLoading(group);
-                
-                (function (appointmentAPI, group, category) {
-                    if (appointmentAPI.url) {
-                        $.ajax({
-                            url: appointmentAPI.url,
-                            type: "GET",
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                var error = jqXHR.errorMessage;
-                            },
-                            success: function (data, jqXHR, textStatus) {
-                                decoders[group](category, data);
-                            }
-                        });
-                    } else {
-                        decoders[group](category, appointmentAPI.getDirectData());
-                    }
-                })(appointmentAPI, group, index);
-            }
-        }
-    
-        notification.initialize();
-
-        $('.notification-switch').each(function () {
-            notification.setSwitch(this);
-        });
-    },
-
-    tabs: {},
-
-    appoint: function (clickedInput) {
-        var $clickedInput = $(clickedInput);
-        var newURL = $clickedInput.attr('href');
-        var type = $clickedInput.attr('form-type');
-        var time = $clickedInput.attr('time');
-        appointment.selectedTime = time;
-        $('.waiting').fadeIn('fast', function () {
-            var newTab = chrome.tabs.create({
-                url: newURL,
-                active: false
-            }, function (tab) {
-                appointment.tabs[tab.id] = {
-                    id: tab.id,
-                    type: type
-                };
-            });
-        });
-    }
-};
-
 var decoders = {
     _getAppointmentDiv: function (type, time, isPreset, url) {
         var appointmentElement = document.createElement('div');
@@ -205,14 +104,25 @@ var statusControl = {
     }
 };
 
-var injectFiles = [
-    'Content/jquery-3.3.1.min.js',
-    'Content/form-assistant.js',
-    'Content/form-injected.js',
-    'Content/form-storage.js',
-    'Content/preset.js'
-];
-
 $(document).ready(function () {
-    appointment.initialize();
+    $('a[class*=appoint]').click(function () {
+        var $clickedInput = $(this);
+        var type = $clickedInput.attr('form-type');
+        var time = $clickedInput.attr('time');
+        $('.waiting').fadeIn('fast', function () {
+            appointment.appoint(newURL, type, time);
+        });
+        
+        return false;
+    });
+
+    appointment.getNewestAppointments(function (group) {
+        statusControl.addLoading(group);
+    }, function (group, category, data) {
+        decoders[group](category, data);
+    });
+
+    $('.notification-switch').each(function () {
+        notification.setSwitch(this);
+    });
 });
