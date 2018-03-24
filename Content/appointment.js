@@ -10,9 +10,6 @@ var appointment = {
     ],
 
     initialize: function () {
-        if (chrome.extension.getBackgroundPage() && window != chrome.extension.getBackgroundPage()) {
-            chrome.extension.getBackgroundPage().appointment.initialize();
-        }
         //Inject files and codes when tabs opened
         if (!appointment.initialized) {
             chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
@@ -21,32 +18,24 @@ var appointment = {
                 if (tab && changeInfo.status == 'complete') {
                     var fileIndex = 0;
                     var injectFile = function () {
-                        //Set preset form type and selected time
+                        //Inject files into opened tab
                         chrome.tabs.executeScript(tab.id, {
-                            code: 'var presetFormType = "' + appointment.tabs[tab.id].type + '";'
+                            file: appointment.injectFiles[fileIndex++]
                         }, function (result) {
-                            //Inject files into opened tab
-                            chrome.tabs.executeScript(tab.id, {
-                                file: appointment.injectFiles[fileIndex++]
-                            }, function (result) {
-                                appointment.injectFiles[fileIndex]
-                                && !injectFile()
-                                || (function () {
-                                    var code = ('var selectedTime = "tab.selectedTime"; (' + function () {
-                                        formAssistant.applyScript('var selectedTime = "tab.selectedTime";');
-                                    }.toString() + ')()')
-                                    .replace('tab.selectedTime', tab.selectedTime || '')
-                                    .replace('tab.selectedTime', tab.selectedTime || '');
+                            appointment.injectFiles[fileIndex]
+                            && !injectFile()
+                            || (function () {
+                                chrome.tabs.sendMessage(tab.id, {
+                                    presetFormType: tab.type,
+                                    selectedTime: tab.selectedTime
+                                }, function (response) {
                                     
-                                    chrome.tabs.executeScript(tab.id, {
-                                        code: code
-                                    }, function (result) {
-                                        chrome.tabs.update(tab.id, {
-                                            active: true
-                                        });
-                                    })
-                                })();
-                            });
+                                });
+
+                                chrome.tabs.update(tab.id, {
+                                    active: true
+                                });
+                            })();
                         });
                     }
         
@@ -59,10 +48,6 @@ var appointment = {
     },
 
     getNewestAppointments: function (onApiLoading, onApiLoaded) {
-        if (chrome.extension.getBackgroundPage() && window != chrome.extension.getBackgroundPage()) {
-            chrome.extension.getBackgroundPage().appointment.getNewestAppointments(onApiLoading, onApiLoaded);
-        }
-
         var groups = ['irp', 'visa'];
         for (var groupIndex in groups) {
             var group = groups[groupIndex];
@@ -94,10 +79,6 @@ var appointment = {
     tabs: {},
 
     appoint: function (type, time) {
-        if (chrome.extension.getBackgroundPage() && window != chrome.extension.getBackgroundPage()) {
-            chrome.extension.getBackgroundPage().appointment.appoint(type, time);
-        }
-
         appointment.initialize();
 
         var newTab = chrome.tabs.create({

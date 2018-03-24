@@ -1,6 +1,21 @@
 var dates = {
     today: new Date(),
 
+    fromVisaSlotTime: function (slotTime) {
+        var day = parseInt(slotTime.substring(0, 2));
+        var month = parseInt(slotTime.substring(3, 5)) - 1;
+        var year = parseInt(slotTime.substring(6, 10));
+
+        if (slotTime.length > 10) {
+            var hour = parseInt(slotTime.substring(11, 13));
+            var minute = parseInt(slotTime.substring(14, 16));
+            var round = slotTime.substring(17, 19) == 'AM' ? 0 : 12;
+            return new Date(year, month, day, hour + round, minute);
+        }
+
+        return new Date(year, month, day);
+    },
+
     getMonths: function (year) {
         var getMonthsForYear= function (leap) {
             var yearMonthsName = (leap && 'leap' || 'normal') + 'YearMonths';

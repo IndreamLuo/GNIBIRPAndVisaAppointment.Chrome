@@ -13,7 +13,7 @@ var decoders = {
             appointmentContent.setAttribute('target', '_blank');
             appointmentContent.setAttribute('time', time);
             $(appointmentContent).click(function () {
-                window.appointment.appoint(this);
+                appointment.appoint(type, time);
                 return false;
             })
         }
@@ -110,7 +110,7 @@ $(document).ready(function () {
         var type = $clickedInput.attr('form-type');
         var time = $clickedInput.attr('time');
         $('.waiting').fadeIn('fast', function () {
-            appointment.appoint(newURL, type, time);
+            appointment.appoint(type, time);
         });
         
         return false;

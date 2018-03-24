@@ -12,7 +12,7 @@ var preset = {
             $('.buttons .clear').click(function () {
                 preset.clear();
             });
-        } else if (typeof presetFormType != 'undefined') {
+        } else if ((typeof autoForm != 'undefined') && autoForm.presetFormType) {
             preset.initializeAppointment();
         }
     },
@@ -48,7 +48,7 @@ var preset = {
     },
 
     initializeAppointment: function () {
-        preset.formType = presetFormType;
+        preset.formType = autoForm.presetFormType;
         preset.storageKey = preset.formType + '-form-preset';
         
         preset.resumeForm(true, function () {

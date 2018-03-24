@@ -1,4 +1,8 @@
 var autoForm = {
+    presetFormType: null,
+
+    selectedTime: null,
+
     completes: [],
 
     onComplete: function (callback) {
@@ -12,6 +16,12 @@ var autoForm = {
         }
     }
 }
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    autoForm.presetFormType = request.presetFormType;
+    autoForm.selectedTime = request.selectedTime;
+    formAssistant.applyScript("var selectedTime = 'autoForm.selectedTime'".replace("autoForm.selectedTime", autoForm.selectedTime));
+});
 
 $(document).ready(function () {
     if (typeof btSrch4Apps != 'undefined') {
@@ -49,5 +59,3 @@ $(document).ready(function () {
         });
     }
 });
-
-alert('hi');
