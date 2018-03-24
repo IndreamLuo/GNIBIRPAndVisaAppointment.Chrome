@@ -78,18 +78,32 @@ var appointment = {
 
     tabs: {},
 
-    appoint: function (type, time) {
+    appoint: function (type, time, callback) {
         appointment.initialize();
 
-        var newTab = chrome.tabs.create({
-            url: appointmentAPIs.appointmentLinks[type],
-            active: false
-        }, function (tab) {
-            appointment.tabs[tab.id] = {
-                id: tab.id,
-                type: type,
-                selectedTime: time
+        chrome.windows.getCurrent(function (currentWindow) {
+            var openTab = function (callback) {
+                    chrome.tabs.create({
+                    url: appointmentAPIs.appointmentLinks[type],
+                    active: false
+                }, function (tab) {
+                    appointment.tabs[tab.id] = {
+                        id: tab.id,
+                        type: type,
+                        selectedTime: time
+                    };
+
+                    callback && callback(tab);
+                });
             };
+
+            currentWindow
+            ? openTab(callback)
+            : chrome.windows.create({
+                'focused': true
+            }, function (window) {
+                openTab(callback);
+            });
         });
     }
 };
