@@ -17,7 +17,7 @@ var preset = {
                 $('.buttons .clear').click(function () {
                     preset.clear();
                 });
-            } else if ((typeof autoForm != 'undefined') && autoForm.presetFormType) {
+            } else {
                 preset.initializeAppointment();
             }
         }
