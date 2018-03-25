@@ -1,14 +1,6 @@
 var appointment = {
     initialized: false,
 
-    injectFiles: [
-        'Content/jquery-3.3.1.min.js',
-        'Content/form-assistant.js',
-        'Content/form-storage.js',
-        'Content/form-injected.js',
-        'Content/preset.js'
-    ],
-
     initialize: function () {
         //Inject files and codes when tabs opened
         if (!appointment.initialized) {
@@ -26,27 +18,14 @@ var appointment = {
                 var tab = appointment.tabs[tabId];
 
                 if (tab && changeInfo.status == 'complete') {
-                    var injectFile = function () {
-                        //Inject files into opened tab
-                        chrome.tabs.executeScript(tab.id, {
-                            file: appointment.injectFiles[tab.fileIndex++]
-                        }, function (result) {
-                            appointment.injectFiles[tab.fileIndex]
-                            ? injectFile()
-                            : (function () {
-                                chrome.tabs.sendMessage(tab.id,
-                                {
-                                    presetFormType: tab.type,
-                                    selectedTime: tab.selectedTime
-                                },
-                                function (response) {
-                                    console.log('Form completed for time.'.replace('time', tab.selectedTime));
-                                });
-                            })();
-                        });
-                    }
-        
-                    injectFile();
+                    chrome.tabs.sendMessage(tab.id,
+                    {
+                        presetFormType: tab.type,
+                        selectedTime: tab.selectedTime
+                    },
+                    function (response) {
+                        console.log('Form completed for time.'.replace('time', tab.selectedTime));
+                    });
                 }
             });
 
