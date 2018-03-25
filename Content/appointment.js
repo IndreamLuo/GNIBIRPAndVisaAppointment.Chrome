@@ -65,6 +65,10 @@ var appointment = {
     tabs: {},
 
     appoint: function (type, time, callback) {
+        if (window != chrome.extension.getBackgroundPage()) {
+            return chrome.extension.getBackgroundPage().appointment.appoint(type, time, callback);
+        }
+
         appointment.initialize();
 
         chrome.windows.getCurrent(function (currentWindow) {
