@@ -1,7 +1,7 @@
 {
     "name": "GNIB/IRP and Visa Appointment",
     "description": "--to be finished--",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "manifest_version": 2,
     "permissions": [
         "https://*/*",
@@ -19,16 +19,6 @@
         "default_popup": "portal.html",
         "default_icon": "icon.png"
     },
-    "background": {
-        "scripts": ["Content/jquery-3.3.1.min.js",
-            "Content/dates.js",
-            "Content/appointment-apis.js",
-            "Content/preset.js",
-            "Content/form-storage.js",
-            "Content/notification.js",
-            "Content/appointment.js",
-            "background.js"]
-      },
 
     "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.gstatic.com/; object-src 'self'"
 }
