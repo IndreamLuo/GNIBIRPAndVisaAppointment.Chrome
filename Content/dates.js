@@ -1,5 +1,25 @@
 var dates = {
     today: new Date(),
+    
+    months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    irpSlotTimeFormat: 'day monthWord year hourRounded:minute',
+    visaSlotTimeFormat: 'day/month/year hour:minute round',
+    serviceTimeFormat: 'month/day/year hour:minute:second round',
+
+    fromIRPSlotTime: function (slotTime) {
+        var splits = slotTime.split(/[ :]/);
+        var day = parseInt(splits[0]);
+        var month = dates.months.indexOf(splits[1]);
+        var year = parseInt(splits[2]);
+        var hourRounded = parseInt(splits[3]);
+        var minute = parseInt(splits[4]);
+
+        return new Date(year, month, day, hourRounded, minute);
+    },
+
+    toIRPSlotTime: function (time) {
+        return dates.toFormattedTime(time, dates.irpSlotTimeFormat);
+    },
 
     fromVisaSlotTime: function (slotTime) {
         var day = parseInt(slotTime.substring(0, 2));
@@ -14,6 +34,47 @@ var dates = {
         }
 
         return new Date(year, month, day);
+    },
+
+    toVisaSlotTime: function (time) {
+        return dates.toFormattedTime(time, dates.visaSlotTimeFormat);
+    },
+
+    fromServiceTime: function (serviceTime) {
+        var splits = serviceTime.split(/[/ :]/);
+        var day = parseInt(splits[1]);
+        var month = parseInt(splits[0]);
+        var year = parseInt(splits[2]);
+        var hour = parseInt(splits[3]);
+        var minute = parseInt(splits[4]);
+        var second = parseInt(splits[5]);
+        var round = splits[6] == 'AM' ? 0 : 12;
+        return new Date(year, month, day, hour + round, minute, second);
+    },
+
+    toServiceTime: function (time) {
+        return dates.toFormattedTime(time, dates.serviceTimeFormat);
+    },
+
+    toFormattedTime: function (time, format) {
+        var year = time.getFullYear();
+        var month = time.getMonth() + 1;
+        var day = time.getDate();
+        var roundedHour = time.getHours();
+        var hour = roundedHour == 12 ? roundedHour : (roundedHour % 12);
+        var round = roundedHour >= 12;
+        var minute = time.getMinutes();
+        var second = time.getSeconds();
+
+        return format
+        .replace('year', year)
+        .replace('month', month)
+        .replace('day', day)
+        .replace('roundedHour', roundedHour)
+        .replace('hour', hour)
+        .replace('minute', minute)
+        .replace('second', second)
+        .replace('round', round);
     },
 
     getMonths: function (year) {
