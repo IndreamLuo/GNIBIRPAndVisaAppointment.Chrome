@@ -4,36 +4,43 @@ var appointment = {
     injectFiles: [
         'Content/jquery-3.3.1.min.js',
         'Content/form-assistant.js',
-        'Content/form-injected.js',
         'Content/form-storage.js',
+        'Content/form-injected.js',
         'Content/preset.js'
     ],
 
     initialize: function () {
         //Inject files and codes when tabs opened
         if (!appointment.initialized) {
+            chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+                if (sender.tab && appointment.tabs[sender.tab.id] && request.autoFormCompleted) {
+                    chrome.tabs.update(sender.tab.id, {
+                        active: true
+                    });
+    
+                    appointment.tabs[sender.tab.id] = null;
+                }
+            });
+
             chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                 var tab = appointment.tabs[tabId];
 
                 if (tab && changeInfo.status == 'complete') {
-                    var fileIndex = 0;
                     var injectFile = function () {
                         //Inject files into opened tab
                         chrome.tabs.executeScript(tab.id, {
-                            file: appointment.injectFiles[fileIndex++]
+                            file: appointment.injectFiles[tab.fileIndex++]
                         }, function (result) {
-                            appointment.injectFiles[fileIndex]
-                            && !injectFile()
-                            || (function () {
-                                chrome.tabs.sendMessage(tab.id, {
+                            appointment.injectFiles[tab.fileIndex]
+                            ? injectFile()
+                            : (function () {
+                                chrome.tabs.sendMessage(tab.id,
+                                {
                                     presetFormType: tab.type,
                                     selectedTime: tab.selectedTime
-                                }, function (response) {
-                                    
-                                });
-
-                                chrome.tabs.update(tab.id, {
-                                    active: true
+                                },
+                                function (response) {
+                                    console.log('Form completed for time.'.replace('time', tab.selectedTime));
                                 });
                             })();
                         });
@@ -82,27 +89,33 @@ var appointment = {
         appointment.initialize();
 
         chrome.windows.getCurrent(function (currentWindow) {
+            var recordTab = function (tab, callback) {
+                appointment.tabs[tab.id] = {
+                    id: tab.id,
+                    type: type,
+                    selectedTime: time || '',
+                    fileIndex: 0
+                };
+
+                callback && callback(tab);
+            }
+
             var openTab = function (callback) {
-                    chrome.tabs.create({
+                chrome.tabs.create({
                     url: appointmentAPIs.appointmentLinks[type],
                     active: false
                 }, function (tab) {
-                    appointment.tabs[tab.id] = {
-                        id: tab.id,
-                        type: type,
-                        selectedTime: time
-                    };
-
-                    callback && callback(tab);
+                    recordTab(tab, callback);
                 });
             };
 
             currentWindow
             ? openTab(callback)
             : chrome.windows.create({
-                'focused': true
+                url: appointmentAPIs.appointmentLinks[type],
+                focused: true
             }, function (window) {
-                openTab(callback);
+                recordTab(window.tabs[0], callback);
             });
         });
     }

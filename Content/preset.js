@@ -1,19 +1,25 @@
 var preset = {
+    isInitialized: false,
+
     inputs: [],
 
     initialize: function () {
-        if ($('.form').attr('is-preset')) {
-            preset.initializePreset();
-    
-            $('.buttons .save').click(function () {
-                preset.save();
-            });
-    
-            $('.buttons .clear').click(function () {
-                preset.clear();
-            });
-        } else if ((typeof autoForm != 'undefined') && autoForm.presetFormType) {
-            preset.initializeAppointment();
+        if (!preset.isInitialized) {
+            preset.isInitialized = true;
+
+            if ($('.form').attr('is-preset')) {
+                preset.initializePreset();
+        
+                $('.buttons .save').click(function () {
+                    preset.save();
+                });
+        
+                $('.buttons .clear').click(function () {
+                    preset.clear();
+                });
+            } else if ((typeof autoForm != 'undefined') && autoForm.presetFormType) {
+                preset.initializeAppointment();
+            }
         }
     },
 
@@ -48,14 +54,15 @@ var preset = {
     },
 
     initializeAppointment: function () {
-        preset.formType = autoForm.presetFormType;
-        preset.storageKey = preset.formType + '-form-preset';
-        
-        preset.resumeForm(true, function () {
-            autoForm.complete();
+        autoForm.onTimeSet(function () {
+            preset.formType = autoForm.presetFormType;
+            preset.storageKey = preset.formType + '-form-preset';
+            
+            preset.resumeForm(true, function (set) {
+                set && formAssistant.applyScript('$(document.body).animate({ scrollTop: $(document).height() }, "slow");');
+                autoForm.complete();
+            });
         });
-
-        formAssistant.applyScript('$(document.body).animate({ scrollTop: $(document).height() }, "slow");');
     },
 
     resumeForm: function (isAppointment, callback) {
@@ -77,7 +84,7 @@ var preset = {
                 }
             }
 
-            callback && callback();
+            callback && callback(formData ? true : false);
         });
     },
 
@@ -85,19 +92,19 @@ var preset = {
         preset.setSelectOptions(select);
     },
 
+    setCheckboxValue: function (input, checkedValue, uncheckedValue) {
+        input.value = input.checked && checkedValue || uncheckedValue;
+    },
+
     setInput: function (input) {
         if (preset.isCheckbox(input)) {
             var checkedValue = input.getAttribute('checked-value');
             var uncheckedValue = input.getAttribute('unchecked-value');
 
-            var setCheckboxValue = function (input, checkedValue, uncheckedValue) {
-                input.value = input.checked && checkedValue || uncheckedValue;
-            };
-
-            setCheckboxValue(input, checkedValue, uncheckedValue);
+            preset.setCheckboxValue(input, checkedValue, uncheckedValue);
 
             $(input).change(function () {
-                setCheckboxValue(this, checkedValue, uncheckedValue);
+                preset.setCheckboxValue(this, checkedValue, uncheckedValue);
             });
         }
     },
@@ -115,7 +122,9 @@ var preset = {
     },
 
     calculateValue: function (input) {
-        input.value = eval(input.getAttribute('calculated-value'));
+        input.value = input.hasAttribute('calculated-value')
+        ? eval(input.getAttribute('calculated-value'))
+        : input.value;
     },
 
     updateValue: function (input) {

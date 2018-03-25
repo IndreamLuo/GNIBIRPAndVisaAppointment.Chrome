@@ -3,10 +3,32 @@ var autoForm = {
 
     selectedTime: null,
 
+    isTimeSet: false,
+
+    timeSets: [],
+
+    onTimeSet: function (callback) {
+        autoForm.isTimeSet
+        ? callback()
+        : autoForm.timeSets.push(callback);
+    },
+
+    timeSet: function () {
+        var callback;
+        while(callback = autoForm.timeSets.shift()) {
+            callback();
+        }
+        autoForm.isTimeSet = true;
+    },
+
+    IsCompleted: false,
+
     completes: [],
 
     onComplete: function (callback) {
-        autoForm.completes.push(callback);
+        autoForm.IsCompleted
+        ? callback()
+        : autoForm.completes.push(callback);
     },
 
     complete: function () {
@@ -14,32 +36,51 @@ var autoForm = {
         while(callback = autoForm.completes.shift()) {
             callback();
         }
+        autoForm.IsCompleted = true;
     }
 }
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    autoForm.presetFormType = request.presetFormType;
-    autoForm.selectedTime = request.selectedTime;
-    formAssistant.applyScript("var selectedTime = 'autoForm.selectedTime'".replace("autoForm.selectedTime", autoForm.selectedTime));
-});
+var messageListener = function (request, sender, sendResponse) {
+    if (request.presetFormType) {
+        autoForm.presetFormType = request.presetFormType;
+        autoForm.selectedTime = request.selectedTime;
+
+        formAssistant.applyScript("var selectedTime = 'autoForm.selectedTime'".replace("autoForm.selectedTime", autoForm.selectedTime));
+        autoForm.timeSet();
+
+        sendResponse();
+    }
+};
+
+!chrome.runtime.onMessage.hasListener(messageListener)
+&& chrome.runtime.onMessage.addListener(messageListener);
+
+
 
 $(document).ready(function () {
-    if (typeof btSrch4Apps != 'undefined') {
-        formAssistant.run(function () {
-            $(btSrch4Apps).click(function () {
-                if (selectedTime) {
-                    var interval = setInterval(function () {
+    autoForm.onComplete(function () {
+        chrome.runtime.sendMessage({
+            autoFormCompleted: true
+        });
+    });
+
+    autoForm.onTimeSet(function () {
+        if (typeof btSrch4Apps != 'undefined') {
+            formAssistant.run(function () {
+                $(btSrch4Apps).click(function () {
+                    var interval; var hello;
+
+                    selectedTime
+                    && (interval = setInterval(function () {
                         if ($(dvAppOptions).css('display') == 'block') {
                             selectedTime && $("td:contains(" + selectedTime + ")").parent().find("button").click();
                             clearInterval(interval);
                         }
-                    });
-                }
+                    }));
+                });
             });
-        });
-    } else if (selectedTime && typeof Appdate != 'undefined') {
-        //Click 'Find Appointment Slot'
-        autoForm.onComplete(function () {
+        } else if (selectedTime && typeof Appdate != 'undefined') {
+            //Click 'Find Appointment Slot'
             formAssistant.run(function () {
                 if (AppointType.value) {
                     //Select date
@@ -56,6 +97,6 @@ $(document).ready(function () {
                     });
                 }
             });
-        });
-    }
+        }
+    });
 });

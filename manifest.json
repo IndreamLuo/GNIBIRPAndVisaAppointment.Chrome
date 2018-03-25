@@ -29,16 +29,6 @@
             "Content/appointment.js",
             "background.js"]
       },
-    "content_scripts": [{
-        "matches": ["https://*/*"],
-        "js": [
-            "Content/jquery-3.3.1.min.js",
-            "Content/form-assistant.js",
-            "Content/form-injected.js",
-            "Content/form-storage.js",
-            "Content/preset.js"
-        ]
-    }],
 
     "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.gstatic.com/; object-src 'self'"
 }

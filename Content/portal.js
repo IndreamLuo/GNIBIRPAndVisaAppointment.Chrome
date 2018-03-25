@@ -105,13 +105,18 @@ var statusControl = {
 };
 
 $(document).ready(function () {
+    var oldAppoint = appointment.appoint;
+    appointment.appoint = function(type, time) {
+        $('.waiting').fadeIn('fast', function () {
+            oldAppoint(type, time);
+        });
+    };
+
     $('a[class*=appoint]').click(function () {
         var $clickedInput = $(this);
         var type = $clickedInput.attr('form-type');
         var time = $clickedInput.attr('time');
-        $('.waiting').fadeIn('fast', function () {
-            appointment.appoint(type, time);
-        });
+        appointment.appoint(type, time);
         
         return false;
     });
