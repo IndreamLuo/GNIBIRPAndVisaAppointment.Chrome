@@ -1,10 +1,23 @@
 .group {
     width: 400px;
     margin-bottom: 25px;
+    margin-top: 10px;
 }
 
 .group .list {
+    min-height: 150px;
+}
 
+.irps .list {
+    /* background-image: url('irp-card.png'); */
+    border-left: solid 2px #ffc8ef;
+    background-size: 100%;
+}
+
+.visas .list {
+    /* background-image: url('irish-visa.jpg'); */
+    border-left: solid 2px #a8c7a1;
+    background-size: 100%;
 }
 
 .group .loading {
@@ -31,7 +44,8 @@
 }
 
 .group .list .appointment {
-    
+    background: rgba(255, 255, 255, 0.7);
+    padding: 2px;
 }
 
 .group .list .empty {

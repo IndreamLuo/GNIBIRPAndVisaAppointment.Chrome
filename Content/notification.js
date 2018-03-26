@@ -59,10 +59,12 @@ var notification = {
                 //Organize message
                 var newNotification = {
                     id: Date.now() + '',
-                    type: message.data.type,
+                    type: message.data.type.toLowerCase(),
                     category: message.data.category,
                     subCategory: message.data.subCategory,
-                    time: message.data.time,
+                    time: (message.data.type.toLowerCase() == 'irp'
+                        ? dates.toIRPSlotTime
+                        : dates.toVisaSlotTime)(dates.fromServiceTime(message.data.time)),
                     title: message.data.title,
                     message: message.data.message
                 };
@@ -72,7 +74,9 @@ var notification = {
                 //Create chrome notification
                 chrome.notifications.create(newNotification.id, {
                     type: "basic",
-                    iconUrl: 'icon.png',
+                    iconUrl: newNotification.type == 'irp' && 'Content/notification-irp.png'
+                    || newNotification.type == 'visa' && 'Content/notification-visa.jpg'
+                    || 'icon.png',
                     title: newNotification.title,
                     message: newNotification.message,
                     buttons: [{
