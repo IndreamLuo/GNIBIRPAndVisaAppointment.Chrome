@@ -1,7 +1,7 @@
 {
     "name": "GNIB/IRP and Visa Appointment",
     "description": "--to be finished--",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "manifest_version": 2,
     "permissions": [
         "https://*/*",
@@ -18,16 +18,6 @@
         "default_popup": "portal.html",
         "default_icon": "icon.png"
     },
-    "background": {
-        "scripts": ["Content/jquery-3.3.1.min.js",
-            "Content/dates.js",
-            "Content/appointment-apis.js",
-            "Content/preset.js",
-            "Content/form-storage.js",
-            "Content/notification.js",
-            "Content/appointment.js",
-            "background.js"]
-      },
     "content_scripts": [{
         "matches": ["https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect*", "https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/AppointmentSelection*"],
         "js": [

@@ -65,8 +65,9 @@ var appointment = {
     tabs: {},
 
     appoint: function (type, time, callback) {
-        if (window != chrome.extension.getBackgroundPage()) {
-            return chrome.extension.getBackgroundPage().appointment.appoint(type, time, callback);
+        var backgroundPage = chrome.extension.getBackgroundPage();
+        if (backgroundPage && window != backgroundPage) {
+            return backgroundPage.appointment.appoint(type, time, callback);
         }
 
         appointment.initialize();
