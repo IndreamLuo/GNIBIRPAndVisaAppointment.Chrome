@@ -21,8 +21,9 @@ var notification = {
     },
 
     turnOn: function (type, callback) {
-        if (window != chrome.extension.getBackgroundPage()) {
-            return chrome.extension.getBackgroundPage().notification.turnOn(type, callback);
+        var backgroundPage = chrome.extension.getBackgroundPage();
+        if (backgroundPage && window != backgroundPage) {
+            return backgroundPage.notification.turnOn(type, callback);
         }
 
         formStorage.retrieve('gcm-registered', function (registered) {
