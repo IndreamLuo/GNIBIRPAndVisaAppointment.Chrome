@@ -25,103 +25,106 @@
                 </li>
             </ul>
         </div>
-        <table class="form" form-type="irp" is-preset="true">
-            <tr>
-                <td>Category</td>
-                <td>
-                    <select id="Category" source="irp.categories"></select>
-                </td>
-            </tr>
-            <tr>
-                <td>Sub Category</td>
-                <td>
-                    <select id="SubCategory" source="irp.categories[Category.value]" dependee="Category" valid-when="Category.value"></select>
-                </td>
-            </tr>
-            <tr>
-                <td>Last IRP/GNIB</td>
-                <td>
-                    <input id="ConfirmGNIB" type="checkbox" checked-value="Renewal" unchecked-value="New" />
-                    <input id="GNIBNo" type="text" dependee='ConfirmGNIB' valid-when="ConfirmGNIB.checked" />
-                </td>
-            </tr>
-            <tr>
-                <td>GNIB Expiry Date</td>
-                <td>
-                    <select id="GNIBExDTYY" source="dates.years" unselected-text="YYYY" dependee="ConfirmGNIB" valid-when="ConfirmGNIB.checked" not-in-appointment></select>
-                    <select id="GNIBExDTMM" source="dates.getMonths(GNIBExDTYY.value)" unselected-text="MM" dependee="[ConfirmGNIB, GNIBExDTYY]" valid-when="GNIBExDTYY.value" not-in-appointment></select>
-                    <select id="GNIBExDTDD" source="dates.getMonths(GNIBExDTYY.value)[GNIBExDTMM.value]" unselected-text="DD" dependee="[ConfirmGNIB, GNIBExDTYY, GNIBExDTMM]" valid-when="GNIBExDTYY.value && GNIBExDTMM.value" not-in-appointment></select>
-                    <input id="GNIBExDT" type="hidden" dependee="[ConfirmGNIB, GNIBExDTDD, GNIBExDTMM, GNIBExDTYY]" calculated-value="GNIBExDTDD.value && GNIBExDTMM.value && GNIBExDTYY.value && [GNIBExDTDD.value, GNIBExDTMM.value, GNIBExDTYY.value].join('/')" />
-                </td>
-            </tr>
-            <tr>
-                <td>Declaration</td>
-                <td>
-                    <input id="UsrDeclaration" type="checkbox" dependee="ConfirmGNIB" valid-when="!ConfirmGNIB.disabled" />
-                    I confirm that all of the above statements are true.
-                </td>
-            </tr>
-            <tr>
-                <td>Given Name</td>
-                <td>
-                    <input id="GivenName" type="text" />
-                </td>
-            </tr>
-            <tr>
-                <td>Surname</td>
-                <td>
-                    <input id="SurName" type="text" />
-                </td>
-            </tr>
-            <tr>
-                <td>Date of Birth</td>
-                <td>
-                    <select id="DOBYY" source="dates.years" unselected-text="YYYY" not-in-appointment></select>
-                    <select id="DOBMM" source="dates.getMonths(DOBYY.value)" unselected-text="MM" dependee="DOBYY" valid-when="DOBYY.value" not-in-appointment></select>
-                    <select id="DOBDD" source="dates.getMonths(DOBYY.value)[DOBMM.value]" unselected-text="DD" dependee="[DOBYY, DOBMM]" valid-when="DOBYY.value && DOBMM.value" not-in-appointment></select>
-                    <input id="DOB" type="hidden" dependee="[DOBDD, DOBMM, DOBYY]" calculated-value="DOBDD.value && DOBMM.value && DOBYY.value && [DOBDD.value, DOBMM.value, DOBYY.value].join('/')" />
-                </td>
-            </tr>
-            <tr>
-                <td>Nationality</td>
-                <td>
-                    <select id="Nationality" source="irp.nationalities"></select>
-                </td>
-            </tr>
-            <tr>
-                <td>E-mail</td>
-                <td>
-                    <input id="Email" type="text" />
-                </td>
-            </tr>
-            <tr>
-                <td>Confirm E-mail</td>
-                <td>
-                    <input id="EmailConfirm" type="text" />
-                </td>
-            </tr>
-            <tr>
-                <td>Family Applicant(s)</td>
-                <td>
-                    <input id="FamAppYN" type="checkbox" checked-value="Yes" unchecked-value="No" />
-                    <select id="FamAppNo" source="irp.familyNumbers" dependee='FamAppYN' valid-when="FamAppYN.checked"></select>
-                </td>
-            </tr>
-            <tr>
-                <td>Current Passport</td>
-                <td>
-                    <input id="PPNoYN" type="checkbox" checked-value="Yes" unchecked-value="No" />
-                    <input id="PPNo" type="text" dependee='PPNoYN' valid-when="PPNoYN.checked" maxlength="30" />
-                </td>
-            <tr>
-                <td>
-                    No Passport Reason
-                </td>
-                <td>
-                    <select id="PPReason" source="irp.noPassportReasons" dependee='PPNoYN' valid-when="!PPNoYN.checked"></select>
-                </td>
-            </tr>
-        </table>
+        <div style="position: relative;">
+            <img class="title-image" src="Content/irp-card.png" />
+            <table class="form" form-type="irp" is-preset="true">
+                <tr>
+                    <td>Category</td>
+                    <td>
+                        <select id="Category" source="irp.categories"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sub Category</td>
+                    <td>
+                        <select id="SubCategory" source="irp.categories[Category.value]" dependee="Category" valid-when="Category.value"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Last IRP/GNIB</td>
+                    <td>
+                        <input id="ConfirmGNIB" type="checkbox" checked-value="Renewal" unchecked-value="New" />
+                        <input id="GNIBNo" type="text" dependee='ConfirmGNIB' valid-when="ConfirmGNIB.checked" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>GNIB Expiry Date</td>
+                    <td>
+                        <select id="GNIBExDTYY" source="dates.years" unselected-text="YYYY" dependee="ConfirmGNIB" valid-when="ConfirmGNIB.checked" not-in-appointment></select>
+                        <select id="GNIBExDTMM" source="dates.getMonths(GNIBExDTYY.value)" unselected-text="MM" dependee="[ConfirmGNIB, GNIBExDTYY]" valid-when="GNIBExDTYY.value" not-in-appointment></select>
+                        <select id="GNIBExDTDD" source="dates.getMonths(GNIBExDTYY.value)[GNIBExDTMM.value]" unselected-text="DD" dependee="[ConfirmGNIB, GNIBExDTYY, GNIBExDTMM]" valid-when="GNIBExDTYY.value && GNIBExDTMM.value" not-in-appointment></select>
+                        <input id="GNIBExDT" type="hidden" dependee="[ConfirmGNIB, GNIBExDTDD, GNIBExDTMM, GNIBExDTYY]" calculated-value="GNIBExDTDD.value && GNIBExDTMM.value && GNIBExDTYY.value && [GNIBExDTDD.value, GNIBExDTMM.value, GNIBExDTYY.value].join('/')" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Declaration</td>
+                    <td>
+                        <input id="UsrDeclaration" type="checkbox" dependee="ConfirmGNIB" valid-when="!ConfirmGNIB.disabled" />
+                        I confirm that all of the above statements are true.
+                    </td>
+                </tr>
+                <tr>
+                    <td>Given Name</td>
+                    <td>
+                        <input id="GivenName" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Surname</td>
+                    <td>
+                        <input id="SurName" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Date of Birth</td>
+                    <td>
+                        <select id="DOBYY" source="dates.years" unselected-text="YYYY" not-in-appointment></select>
+                        <select id="DOBMM" source="dates.getMonths(DOBYY.value)" unselected-text="MM" dependee="DOBYY" valid-when="DOBYY.value" not-in-appointment></select>
+                        <select id="DOBDD" source="dates.getMonths(DOBYY.value)[DOBMM.value]" unselected-text="DD" dependee="[DOBYY, DOBMM]" valid-when="DOBYY.value && DOBMM.value" not-in-appointment></select>
+                        <input id="DOB" type="hidden" dependee="[DOBDD, DOBMM, DOBYY]" calculated-value="DOBDD.value && DOBMM.value && DOBYY.value && [DOBDD.value, DOBMM.value, DOBYY.value].join('/')" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Nationality</td>
+                    <td>
+                        <select id="Nationality" source="irp.nationalities"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>E-mail</td>
+                    <td>
+                        <input id="Email" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Confirm E-mail</td>
+                    <td>
+                        <input id="EmailConfirm" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Family Applicant(s)</td>
+                    <td>
+                        <input id="FamAppYN" type="checkbox" checked-value="Yes" unchecked-value="No" />
+                        <select id="FamAppNo" source="irp.familyNumbers" dependee='FamAppYN' valid-when="FamAppYN.checked"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Current Passport</td>
+                    <td>
+                        <input id="PPNoYN" type="checkbox" checked-value="Yes" unchecked-value="No" />
+                        <input id="PPNo" type="text" dependee='PPNoYN' valid-when="PPNoYN.checked" maxlength="30" />
+                    </td>
+                <tr>
+                    <td>
+                        No Passport Reason
+                    </td>
+                    <td>
+                        <select id="PPReason" source="irp.noPassportReasons" dependee='PPNoYN' valid-when="!PPNoYN.checked"></select>
+                    </td>
+                </tr>
+            </table>
+        </div>
         <input id="btLook4App" type="hidden" />
         <input id="AppSelectChoice" type="hidden" value="S" />
         <input id="btSrch4Apps" type="hidden" />

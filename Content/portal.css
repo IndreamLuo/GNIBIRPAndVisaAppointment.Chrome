@@ -2,6 +2,7 @@
     width: 400px;
     margin-bottom: 25px;
     margin-top: 10px;
+    position: relative;
 }
 
 .group .list {

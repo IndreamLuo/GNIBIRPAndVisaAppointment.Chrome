@@ -25,100 +25,103 @@
                 </li>
             </ul>
         </div>
-        <table class="form" form-type="visa" is-preset="true">
-            <tr>
-                <td>Confirmation</td>
-                <td>
-                    <input id="btCom" type="checkbox" />
-                    <ol>
-                        <li>I am visa required national</li>
-                        <li>I hold a valid IRP or GNIB card</li>
-                        <li>I am residing continuously</li>
-                    </ol>
-                </td>
-            </tr>
-            <tr>
-                <td>GivenName</td>
-                <td>
-                    <input id="GivenName" type="text" />
-                </td>
-            </tr>
-            <tr>
-                <td>Surname</td>
-                <td>
-                    <input id="Surname" type="text" />
-                </td>
-            </tr>
-            <tr>
-                <td>Date of Birth</td>
-                <td>
-                    <select id="DOBYY" source="dates.years" unselected-text="YYYY" not-in-appointment></select>
-                    <select id="DOBMM" source="dates.getMonths(DOBYY.value)" unselected-text="MM" dependee="DOBYY" valid-when="DOBYY.value" not-in-appointment></select>
-                    <select id="DOBDD" source="dates.getMonths(DOBYY.value)[DOBMM.value]" unselected-text="DD" dependee="[DOBYY, DOBMM]" valid-when="DOBYY.value && DOBMM.value" not-in-appointment></select>
-                    <input id="DOB" type="hidden" dependee="[DOBDD, DOBMM, DOBYY]" calculated-value="DOBDD.value && DOBMM.value && DOBYY.value && [DOBDD.value, DOBMM.value, DOBYY.value].join('/')" />
-                </td>
-            </tr>
-            <tr>
-                <td>E-mail</td>
-                <td>
-                    <input id="Email" type="text" />
-                </td>
-            </tr>
-            <tr>
-                <td>Confirm E-mail</td>
-                <td>
-                    <input id="EmailConfirm" type="text" />
-                </td>
-            </tr>
-            <tr>
-                <td>Appointment Type</td>
-                <td>
-                    <select id="AppointType" source="visa.appointmentTypes"></select>
-                </td>
-            </tr>
-            <tr>
-                <td>Applicants Number</td>
-                <td>
-                    <select id="AppsNum" source="visa.applicantNumbers" preload-source dependee="AppointType" valid-when="AppointType.value!='Individual'" calculated-value="AppointType.value == 'Individual' ? 1 : AppsNum.value" always-calculate></select>
-                </td>
-            </tr>
-            <tr>
-                <td>Emergency Reason</td>
-                <td>
-                    <select id="EmReason" source="visa.emergencyReasons" dependee="AppointType" valid-when="AppointType.value=='Emergency'"></select>
-                </td>
-            </tr>
-            <tr>
-                <td>Contact Telephone</td>
-                <td>
-                    +353 <input id="EmContactNum" dependee="AppointType" valid-when="AppointType.value=='Emergency'" />
-                </td>
-            </tr>
-            <tr>
-                <td>Passport Number</td>
-                <td>
-                    <input id="PassportNo" type="text" />
-                </td>
-            <tr>
-            <tr>
-                <td>Nationality</td>
-                <td>
-                    <select id="Nationality" source="visa.nationalities"></select>
-                </td>
-            </tr>
-            <tr>
-                <td>Type of visa</td>
-                <td>
-                    <select id="VisaType" source="visa.visaTypes" dependee="AppointType" valid-when="AppointType.value != 'Emergency'" calculated-value="AppointType.value == 'Emergency' ? 'Single' : AppsNum.value" always-calculate></select>
-                </td>
-            </tr>
-            <tr>
-                <td>IRP/GNIB Number</td>
-                <td>
-                    <input id="GNIBNo" type="text" />
-                </td>
-            </tr>
-        </table>
+        <div style="position: relative;">
+            <img class="title-image" src="Content/irish-visa.jpg" />
+            <table class="form" form-type="visa" is-preset="true">
+                <tr>
+                    <td>Confirmation</td>
+                    <td>
+                        <input id="btCom" type="checkbox" />
+                        <ol>
+                            <li>I am visa required national</li>
+                            <li>I hold a valid IRP or GNIB card</li>
+                            <li>I am residing continuously</li>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GivenName</td>
+                    <td>
+                        <input id="GivenName" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Surname</td>
+                    <td>
+                        <input id="Surname" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Date of Birth</td>
+                    <td>
+                        <select id="DOBYY" source="dates.years" unselected-text="YYYY" not-in-appointment></select>
+                        <select id="DOBMM" source="dates.getMonths(DOBYY.value)" unselected-text="MM" dependee="DOBYY" valid-when="DOBYY.value" not-in-appointment></select>
+                        <select id="DOBDD" source="dates.getMonths(DOBYY.value)[DOBMM.value]" unselected-text="DD" dependee="[DOBYY, DOBMM]" valid-when="DOBYY.value && DOBMM.value" not-in-appointment></select>
+                        <input id="DOB" type="hidden" dependee="[DOBDD, DOBMM, DOBYY]" calculated-value="DOBDD.value && DOBMM.value && DOBYY.value && [DOBDD.value, DOBMM.value, DOBYY.value].join('/')" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>E-mail</td>
+                    <td>
+                        <input id="Email" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Confirm E-mail</td>
+                    <td>
+                        <input id="EmailConfirm" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Appointment Type</td>
+                    <td>
+                        <select id="AppointType" source="visa.appointmentTypes"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Applicants Number</td>
+                    <td>
+                        <select id="AppsNum" source="visa.applicantNumbers" preload-source dependee="AppointType" valid-when="AppointType.value!='Individual'" calculated-value="AppointType.value == 'Individual' ? 1 : AppsNum.value" always-calculate></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Emergency Reason</td>
+                    <td>
+                        <select id="EmReason" source="visa.emergencyReasons" dependee="AppointType" valid-when="AppointType.value=='Emergency'"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Contact Telephone</td>
+                    <td>
+                        +353 <input id="EmContactNum" dependee="AppointType" valid-when="AppointType.value=='Emergency'" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Passport Number</td>
+                    <td>
+                        <input id="PassportNo" type="text" />
+                    </td>
+                <tr>
+                <tr>
+                    <td>Nationality</td>
+                    <td>
+                        <select id="Nationality" source="visa.nationalities"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Type of visa</td>
+                    <td>
+                        <select id="VisaType" source="visa.visaTypes" dependee="AppointType" valid-when="AppointType.value != 'Emergency'" calculated-value="AppointType.value == 'Emergency' ? 'Single' : AppsNum.value" always-calculate></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>IRP/GNIB Number</td>
+                    <td>
+                        <input id="GNIBNo" type="text" />
+                    </td>
+                </tr>
+            </table>
+        </div>
         <div class="buttons">
             <a class="button save" target="_self" href="portal.html">
                 Save
