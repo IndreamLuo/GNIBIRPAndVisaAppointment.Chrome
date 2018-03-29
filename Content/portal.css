@@ -66,3 +66,12 @@
 .group .notification {
     background-color: #033c73;
 }
+
+.title-image {
+    position: absolute;
+    width: 100px;
+    top: 30px;
+    right: 0;
+    z-index: -1;
+    opacity: 0.8;
+}
