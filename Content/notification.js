@@ -81,16 +81,18 @@ var notification = {
                     title: newNotification.title,
                     message: newNotification.message,
                     buttons: [{
-                        title: "Appoint"
-                    }, {
-                        title: "Ignore"
+                        title: "Ignore All"
                     }],
                     isClickable: true
                 });
 
+                //Listen notification
+                !chrome.notifications.onClicked.hasListener(notification.tileListener)
+                && chrome.notifications.onClicked.addListener(notification.tileListener);
+
                 //Listen notification button
-                !chrome.notifications.onButtonClicked.hasListener(notification.listener)
-                && chrome.notifications.onButtonClicked.addListener(notification.listener);
+                !chrome.notifications.onButtonClicked.hasListener(notification.buttonListener)
+                && chrome.notifications.onButtonClicked.addListener(notification.buttonListener);
                 
                 callback && callback();
             };
@@ -103,14 +105,16 @@ var notification = {
         });
     },
 
-    listener: function (notificationId, buttonIndex) {
-        if (buttonIndex == 0) {
-            var clickedNotification = notification.notifications[notificationId];
-            var api = appointmentAPIs[clickedNotification.type.toLowerCase()][clickedNotification.category + (clickedNotification.subCategory ? '-' + clickedNotification.subCategory : '')];
-            appointment.appoint(clickedNotification.type.toLowerCase(), clickedNotification.time);
-        }
+    tileListener: function(notificationId) {
+        var clickedNotification = notification.notifications[notificationId];
+        appointment.appoint(clickedNotification.type.toLowerCase(), clickedNotification.time);
+    },
 
-        chrome.notifications.clear(notificationId);
+    buttonListener: function (notificationId, buttonIndex) {
+        for (var notificationId in notification.notifications) {
+            chrome.notifications.clear(notificationId);
+            notification.notifications[notificationId] = null;
+        }
     },
 
     turnOff: function (type, callback) {
