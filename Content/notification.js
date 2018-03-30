@@ -6,13 +6,10 @@ var notification = {
     notifications: {},
 
     initialize: function () {
-        notification.getStatus("irp", function (on) {
-            on && notification.turnOn("irp");
-        });
-        
-        notification.getStatus("visa", function (on) {
-            on && notification.turnOn("visa");
-        });
+        // formStorage.retrieve("notification-switch", function (on) {
+        //     on &&
+            notification.turnOn();
+        // });
     },
 
     notificationBase: function (title, message) {
@@ -20,10 +17,10 @@ var notification = {
         this.iconUrl = 'icon.png';
     },
 
-    turnOn: function (type, callback) {
+    turnOn: function (callback) {
         var backgroundPage = chrome.extension.getBackgroundPage();
         if (backgroundPage && window != backgroundPage) {
-            return backgroundPage.notification.turnOn(type, callback);
+            return backgroundPage.notification.turnOn(callback);
         }
 
         formStorage.retrieve('gcm-registered', function (registered) {
@@ -32,20 +29,28 @@ var notification = {
                     if (chrome.runtime.lastError) {
                         console.log('gcm register error:' + chrome.runtime.lastError);
                     } else {
-                        preset.getPreset(function () {
-                            $.ajax({
-                                url: 'https://gnibirpandvisaappointmentservice.azurewebsites.net/api/Subscribe',
-                                method: 'POST',
-                                data: JSON.stringify({
-                                    gcmToken: gcmToken,
-                                    type: type
-                                }),
-                                dataType: "json",
-                                contentType: 'application/json',
-                                success: function () {
-                                    notification.listenGCM(type, gcmToken, callback);
-                                }
-                            });
+                        preset.getPreset(function (presets) {
+                            var notificationForm = presets.notification;
+                            if (notificationForm) {
+                                var irpCategories = notificationForm.irpNotification.split('-');
+                                var visaCategory = notificationForm.visaNotification;
+
+                                $.ajax({
+                                    url: 'https://gnibirpandvisaappointmentservice.azurewebsites.net/api/Subscribe',
+                                    method: 'POST',
+                                    data: JSON.stringify({
+                                        gcmToken: gcmToken,
+                                        irpCategory: irpCategories[0],
+                                        irpSubCategory: irpCategories[1],
+                                        visaCategory: visaCategory
+                                    }),
+                                    dataType: "json",
+                                    contentType: 'application/json',
+                                    success: function () {
+                                        notification.listenGCM(gcmToken, callback);
+                                    }
+                                });
+                            }
                         });
                     }
                 });
@@ -53,7 +58,7 @@ var notification = {
         });
     },
 
-    listenGCM: function (type, gcmToken, callback) {
+    listenGCM: function (gcmToken, callback) {
         formStorage.save("gcmToken", gcmToken, function () {
             //Add GCM message listener
             var messageListener = function (message) {
@@ -93,14 +98,14 @@ var notification = {
                 //Listen notification button
                 !chrome.notifications.onButtonClicked.hasListener(notification.buttonListener)
                 && chrome.notifications.onButtonClicked.addListener(notification.buttonListener);
-                
-                callback && callback();
             };
 
             !chrome.gcm.onMessage.hasListener(messageListener) && chrome.gcm.onMessage.addListener(messageListener);
 
-            formStorage.save(type + '-notification', true, function () {
+            formStorage.save('notification-switch', true, function () {
                 notification.isListening = true;
+                
+                callback && callback();
             });
         });
     },
@@ -117,9 +122,9 @@ var notification = {
         }
     },
 
-    turnOff: function (type, callback) {
+    turnOff: function (callback) {
         if (window != chrome.extension.getBackgroundPage()) {
-            return chrome.extension.getBackgroundPage().notification.turnOff(type, callback);
+            return chrome.extension.getBackgroundPage().notification.turnOff(callback);
         }
 
         chrome.gcm.unregister(function () {
@@ -127,12 +132,18 @@ var notification = {
                 var unsubscribeUrl = "https://gnibirpandvisaappointmentservice.azurewebsites.net/api/Unsubscribe/{type}/{key}?code=Ho4tYiGSvGcsQmOtUE77ln9SIB7B2zbrjCZDfWumqltbKRFmPjNlDw==";
                 unsubscribeUrl = unsubscribeUrl.replace("{type}", "GCM").replace("{key}", gcmToken);
                 $.post(unsubscribeUrl, function () {
-                    formStorage.save(type + '-notification', false, function () {
+                    formStorage.save('notification-switch', false, function () {
                         notification.isListening = false;
                         callback && callback();
                     });
                 })
             });
+        });
+    },
+
+    restart: function (callback) {
+        notification.turnOff(function () {
+            notification.turnOn(callback);
         });
     },
 

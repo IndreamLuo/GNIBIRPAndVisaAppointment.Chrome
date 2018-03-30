@@ -11,7 +11,25 @@ var preset = {
                 preset.initializePreset();
         
                 $('.buttons .save').click(function () {
-                    preset.save();
+                    var clicked = this;
+                    preset.save(function () {
+                        preset.presets && (delete preset.presets[preset.formType]);
+
+                        var backgroundPage = chrome.extension.getBackgroundPage();
+                        if (backgroundPage) {
+                            backgroundPage.preset.presets && (delete backgroundPage.preset.presets[preset.formType]);
+                        }
+
+                        if ($('.form').attr('form-save')) {
+                            eval($('.form').attr('form-save'));
+                        }
+                        else
+                        {
+                            window.location.href = clicked.getAttribute('href');
+                        }
+                    });
+
+                    return false;
                 });
         
                 $('.buttons .clear').click(function () {
@@ -235,10 +253,10 @@ var preset = {
         preset.presets
         && preset.presets.irp && preset.presets.irp.loaded
         && preset.presets.visa && preset.presets.visa.loaded
-        || preset._getPresetCallbacks && !preset._getPresetCallbacks.length
+        && preset.presets.notification && preset.presets.notification.loaded
         ? callback(preset.presets)
         : (function () {
-            if (!preset._getPresetCallbacks) {
+            if (!preset._getPresetCallbacks || !preset._getPresetCallbacks.length) {
                 preset._getPresetCallbacks = [callback];
                 preset.presets = {};
 
@@ -257,10 +275,12 @@ var preset = {
 
                 retrieveData('irp', function () {
                     retrieveData('visa', function () {
-                        var callback;
-                        while (callback = preset._getPresetCallbacks.shift()) {
-                            callback(preset.presets);
-                        }
+                        retrieveData('notification', function () {
+                            var callback;
+                            while (callback = preset._getPresetCallbacks.shift()) {
+                                callback(preset.presets);
+                            }
+                        });
                     });
                 });
             } else {
@@ -269,10 +289,10 @@ var preset = {
         }());
     },
    
-    save: function () {
+    save: function (callback) {
         var data = preset.collectData();
         formStorage.save(preset.storageKey, data, function () {
-            //
+            callback && callback();
         });
     },
 
