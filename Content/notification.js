@@ -29,20 +29,21 @@ var notification = {
                     if (chrome.runtime.lastError) {
                         console.log('gcm register error:' + chrome.runtime.lastError);
                     } else {
-                        preset.getPreset(function (presets) {
-                            var notificationForm = presets.notification;
-                            if (notificationForm) {
-                                var irpCategories = notificationForm.irpNotification.split('-');
-                                var visaCategory = notificationForm.visaNotification;
+                        notification.getStatus(function (status) {
+                            preset.getPreset(function (presets) {
+                                // var notificationForm = presets.notification;
+                                // if (notificationForm) {
+                                //     var irpCategories = notificationForm.irpNotification.split('-');
+                                //     var visaCategory = notificationForm.visaNotification;
 
                                 $.ajax({
                                     url: 'https://gnibirpandvisaappointmentservice.azurewebsites.net/api/Subscribe',
                                     method: 'POST',
                                     data: JSON.stringify({
                                         gcmToken: gcmToken,
-                                        irpCategory: irpCategories[0],
-                                        irpSubCategory: irpCategories[1],
-                                        visaCategory: visaCategory
+                                        irpCategory: (status && status.irp) ? presets.irp['Category'] : null,
+                                        irpSubCategory: (status && status.irp) ? (presets.irp['ConfirmGNIB'] == 'YES' ? 'Renewal' : 'New') : null,
+                                        visaCategory: (status && status.visa) ? presets.visa['AppointType'] : null
                                     }),
                                     dataType: "json",
                                     contentType: 'application/json',
@@ -50,7 +51,8 @@ var notification = {
                                         notification.listenGCM(gcmToken, callback);
                                     }
                                 });
-                            }
+                                // }
+                            });
                         });
                     }
                 });
@@ -147,19 +149,46 @@ var notification = {
         });
     },
 
-    getStatus: function (type, callback) {
-        formStorage.retrieve(type + '-notification', callback);
+    status: null,
+
+    getStatus: function (callback) {
+        notification.status
+        ? callback(notification.status)
+        : formStorage.retrieve('notification-status', function(status) {
+            notification.status = (typeof status == 'undefined' || status) ? {} : status;
+            callback(notification.status);
+        });
+    },
+
+    setStatus: function (status, callback) {
+        formStorage.save('notification-status', status, function () {
+            var backgroundPage = chrome.extension.getBackgroundPage();
+            
+            backgroundPage
+            && (backgroundPage.notification.status = status);
+            
+            notification.restart();
+        })
     },
 
     setSwitch: function (input) {
         if (input.type == 'checkbox') {
-            var type = input.getAttribute('notification-type');
+            input.disabled = true;
 
-            notification.getStatus(type, function (currentStatus) {
-                input.checked = currentStatus;
-                $(input).change(function () {
-                    notification[input.checked ? 'turnOn' : 'turnOff'](type); 
-                });
+            preset.getPreset(function (presets) {
+                var type = input.getAttribute('notification-type');
+
+                if (presets[type] && (presets[type]['Category'] || presets[type]['AppointType'])) {
+                    notification.getStatus(function (status) {
+                        input.disabled = false;
+
+                        input.checked = status[type];
+                        $(input).change(function () {
+                            notification.status[type] = input.checked;
+                            notification.setStatus(notification.status);
+                        });
+                    });
+                }
             });
         }
     }
