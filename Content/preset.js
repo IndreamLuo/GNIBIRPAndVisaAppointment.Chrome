@@ -72,15 +72,23 @@ var preset = {
                 if (isAppointment && inputData.inAppointment || !isAppointment) {
                     var input = document.getElementById(inputData.id);
 
-                    preset.isButton(input)
-                    ? (isAppointment
+                    if (preset.isButton(input)) {
+                        isAppointment
                         ? formAssistant.applyScript('$(' + input.id + ').click();')
-                        : $(input).click())
-                    : ((preset.isCheckbox(input) && (input.checked = !preset.isValuedCheckbox(input) ? inputData.value : input.getAttribute('checked-value') == inputData.value)
-                        || (input.value = inputData.value)) || true)
-                        && (isAppointment
-                            ? formAssistant.applyScript('$(' + input.id + ').change();')
-                            : $(input).change());
+                        : $(input).click();
+                    } else {
+                        if (preset.isCheckbox(input)) {
+                            input.checked = !preset.isValuedCheckbox(input) ? inputData.value : input.getAttribute('checked-value') == inputData.value;
+                        } else if (preset.isRadio(input)) {
+                            input.checked = (typeof inputData.value != 'undefined') ? inputData.value : input.checked;
+                        } else {
+                            input.value = inputData.value
+                        }
+                        
+                        isAppointment
+                        ? formAssistant.applyScript('$(' + input.id + ').change();')
+                        : $(input).change()
+                    }
                 }
             }
 
@@ -111,6 +119,10 @@ var preset = {
 
     isCheckbox: function (input) {
         return input.nodeName == 'INPUT' && input.type == 'checkbox';
+    },
+
+    isRadio: function (input) {
+        return input.nodeName == 'INPUT' && input.type == 'radio';
     },
 
     isValuedCheckbox: function (input) {
@@ -204,7 +216,7 @@ var preset = {
                 })())
                 && data.push({
                     id: dependant.id,
-                    value: (preset.isCheckbox(dependant) && !preset.isValuedCheckbox(dependant))
+                    value: (preset.isCheckbox(dependant) && !preset.isValuedCheckbox(dependant) || preset.isRadio(dependant))
                         ? dependant.checked
                         : dependant.value,
                     inAppointment: !dependant.hasAttribute('not-in-appointment')

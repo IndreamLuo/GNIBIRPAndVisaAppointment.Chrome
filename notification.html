@@ -2,8 +2,11 @@
     <head>
         <script type="text/javascript" src="Content/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="Content/dates.js"></script>
+        <script type="text/javascript" src="Content/form-storage.js"></script>
+        <script type="text/javascript" src="Content/form-assistant.js"></script>
         <link type="text/css" rel="stylesheet" href="Content/master.css" />
 
+        <script type="text/javascript" src="Content/preset.js"></script>
         <script type="text/javascript" src="Content/notification.js"></script>
         <link type="text/css" rel="stylesheet" href="Content/notification.css" />
     </head>
@@ -11,14 +14,45 @@
         <div class="header">
             Notification
         </div>
+        <div class="information">
+            <ul>
+                <li>Only the categories of notification you selected will be pushed to you.</li>
+                <li>The notification configurations are stored locally and only valid for you current device.</li>
+            </ul>
+        </div>
         <div class="buttons">
-            <table class="form" form-type="irp-notification">
+            <table class="form" form-type="notification" is-preset="true">
                 <tr>
-                    <td>
-                        Turn On
+                    <td class="title-image-container">
+                        IRP Notification
+                        <img class="title-image" src="Content/notification-irp.png" />
                     </td>
                     <td>
-                        <input id="TurnedOn" type="checkbox" />
+                        <input id="irpNotificationNo" name="irp-notification" value="" type="radio" checked />No<br />
+                        <input id="irpNotificationWorkNew" name="irp-notification" value="Work-New" type="radio" />Work-New<br />
+                        <input id="irpNotificationWorkRenewal" name="irp-notification" value="Work-Renewal" type="radio" />Work-Renewal<br />
+                        <input id="irpNotificationStudyNew" name="irp-notification" value="Study-New" type="radio" />Study-New<br />
+                        <input id="irpNotificationStudyRenewal" name="irp-notification" value="Study-Renewal" type="radio" />Study-Renewal<br />
+                        <input id="irpNotificationOtherNew" name="irp-notification" value="Other-New" type="radio" />Other-New<br />
+                        <input id="irpNotificationOtherRenewal" name="irp-notification" value="Other-Renewal" type="radio" />Other-Renewal<br />
+                        <input id="irpNotification" type="hidden"
+                            dependee="[irpNotificationNo, irpNotificationWorkNew, irpNotificationWorkRenewal, irpNotificationStudyNew, irpNotificationStudyRenewal, irpNotificationOtherNew, irpNotificationOtherRenewal]"
+                            calculated-value="$('[name=irp-notification]:checked').val()" always-calulate />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title-image-container">
+                        Visa Notification
+                        <img class="title-image" src="Content/notification-visa.jpg" />
+                    </td>
+                    <td>
+                        <input id="visaNotificationNo" name="visa-notification" value="" type="radio" checked />No<br />
+                        <input id="visaNotificationIndividual" name="visa-notification" value="Individual" type="radio" />Individual<br />
+                        <input id="visaNotificationFamily" name="visa-notification" value="Family" type="radio" />Family<br />
+                        <input id="visaNotificationEmergency" name="visa-notification" value="Emergency" type="radio" />Emergency<br />
+                        <input id="visaNotification" type="hidden"
+                            dependee="[visaNotificationNo, visaNotificationIndividual, visaNotificationFamily, visaNotificationEmergency]"
+                            calculated-value="$('[name=visa-notification]:checked').val()" always-calulate />
                     </td>
                 </tr>
             </table>

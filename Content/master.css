@@ -13,6 +13,10 @@ ul, ol {
     margin-bottom: 0;
 }
 
+table[class~=form] {
+    min-width: 400px;
+}
+
 .form {
     margin-bottom: 5px;
     font-size: 13px;
@@ -20,7 +24,7 @@ ul, ol {
 
 .form tr td:first-child {
     display: inline-block;
-    width: 150px;
+    min-width: 110px;
     padding: 3px;
     text-align: right;
 }
@@ -30,7 +34,7 @@ ul, ol {
 }
 
 .form tr td:last-child {
-    width: 150px;
+    min-width: 350px;
     padding: 3px;
     text-align: left;
 }
@@ -89,6 +93,20 @@ ul, ol {
     right: 0;
     z-index: -1;
     opacity: 0.2;
+}
+
+.title-image-container {
+    position: relative;
+    min-height: 110px;
+}
+
+.title-image {
+    position: absolute;
+    width: 80px;
+    top: 30px;
+    right: 0;
+    z-index: -1;
+    opacity: 0.8;
 }
 
 .save {
