@@ -24,7 +24,7 @@ table[class~=form] {
 
 .form tr td:first-child {
     display: inline-block;
-    min-width: 110px;
+    min-width: 150px;
     padding: 3px;
     text-align: right;
 }
@@ -34,7 +34,7 @@ table[class~=form] {
 }
 
 .form tr td:last-child {
-    min-width: 350px;
+    min-width: 300px;
     padding: 3px;
     text-align: left;
 }
