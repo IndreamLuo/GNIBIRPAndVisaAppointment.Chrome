@@ -155,7 +155,7 @@ var notification = {
         notification.status
         ? callback(notification.status)
         : formStorage.retrieve('notification-status', function(status) {
-            notification.status = (typeof status == 'undefined' || status) ? {} : status;
+            notification.status = (typeof status == 'undefined' || !status) ? {} : status;
             callback(notification.status);
         });
     },
