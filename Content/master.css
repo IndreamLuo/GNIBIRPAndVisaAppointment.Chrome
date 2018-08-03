@@ -14,7 +14,7 @@ ul, ol {
 }
 
 table[class~=form] {
-    min-width: 400px;
+    min-width: 600px;
 }
 
 .form {
