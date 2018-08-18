@@ -1,5 +1,5 @@
 var notification = {
-    senderId: '164032443416',
+    senderId: config.gcmSenderId,
 
     isListening: false,
 
@@ -37,7 +37,7 @@ var notification = {
                                 //     var visaCategory = notificationForm.visaNotification;
 
                                 $.ajax({
-                                    url: 'https://gnibirpandvisaappointmentservice.azurewebsites.net/api/Subscribe',
+                                    url: config.gcmSubscribeUrl,
                                     method: 'POST',
                                     data: JSON.stringify({
                                         gcmToken: gcmToken,
@@ -131,7 +131,7 @@ var notification = {
 
         chrome.gcm.unregister(function () {
             formStorage.retrieve("gcmToken", function (gcmToken) {
-                var unsubscribeUrl = "https://gnibirpandvisaappointmentservice.azurewebsites.net/api/Unsubscribe/{type}/{key}?code=Ho4tYiGSvGcsQmOtUE77ln9SIB7B2zbrjCZDfWumqltbKRFmPjNlDw==";
+                var unsubscribeUrl = config.gcmUnsubscribeUrl;
                 unsubscribeUrl = unsubscribeUrl.replace("{type}", "GCM").replace("{key}", gcmToken);
                 $.post(unsubscribeUrl, function () {
                     formStorage.save('notification-switch', false, function () {
