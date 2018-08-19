@@ -2,7 +2,7 @@ var dates = {
     today: new Date(),
     
     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-    irpSlotTimeFormat: 'day monthWord year hourRounded:minute',
+    irpSlotTimeFormat: 'day monthWord year roundedHour:minute',
     visaSlotTimeFormat: 'day/month/year hour:minute round',
     serviceTimeFormat: 'month/day/year hour:minute:second round',
 
@@ -57,17 +57,23 @@ var dates = {
     },
 
     toFormattedTime: function (time, format) {
+        var toFixedHourMinute = function (number) {
+            return number < 10 ? '0' + number : number;
+        }
+
         var year = time.getFullYear();
         var month = time.getMonth() + 1;
+        var monthWord = dates.months[time.getMonth()];
         var day = time.getDate();
-        var roundedHour = time.getHours();
-        var hour = roundedHour == 12 ? roundedHour : (roundedHour % 12);
+        var roundedHour = toFixedHourMinute(time.getHours());
+        var hour = toFixedHourMinute(roundedHour == 12 ? roundedHour : (roundedHour % 12));
         var round = roundedHour >= 12;
-        var minute = time.getMinutes();
-        var second = time.getSeconds();
+        var minute = toFixedHourMinute(time.getMinutes());
+        var second = toFixedHourMinute(time.getSeconds());
 
         return format
         .replace('year', year)
+        .replace('monthWord', monthWord)
         .replace('month', month)
         .replace('day', day)
         .replace('roundedHour', roundedHour)

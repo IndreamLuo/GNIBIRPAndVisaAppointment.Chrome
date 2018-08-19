@@ -113,6 +113,7 @@ var notification = {
     },
 
     tileListener: function(notificationId) {
+        chrome.notifications.clear(notificationId);
         var clickedNotification = notification.notifications[notificationId];
         appointment.appoint(clickedNotification.type.toLowerCase(), clickedNotification.time);
     },
