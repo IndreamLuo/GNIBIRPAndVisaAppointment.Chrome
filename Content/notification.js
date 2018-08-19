@@ -5,11 +5,10 @@ var notification = {
 
     notifications: {},
 
+    recentMessageTimes: {},
+
     initialize: function () {
-        // formStorage.retrieve("notification-switch", function (on) {
-        //     on &&
-            notification.turnOn();
-        // });
+        notification.turnOn();
     },
 
     notificationBase: function (title, message) {
@@ -31,10 +30,6 @@ var notification = {
                     } else {
                         notification.getStatus(function (status) {
                             preset.getPreset(function (presets) {
-                                // var notificationForm = presets.notification;
-                                // if (notificationForm) {
-                                //     var irpCategories = notificationForm.irpNotification.split('-');
-                                //     var visaCategory = notificationForm.visaNotification;
 
                                 $.ajax({
                                     url: config.gcmSubscribeUrl,
@@ -51,7 +46,6 @@ var notification = {
                                         notification.listenGCM(gcmToken, callback);
                                     }
                                 });
-                                // }
                             });
                         });
                     }
@@ -64,6 +58,14 @@ var notification = {
         formStorage.save("gcmToken", gcmToken, function () {
             //Add GCM message listener
             var messageListener = function (message) {
+                //Don't publish if resent notification message exists
+                if (notification.recentMessageTimes[message._timestamp])
+                {
+                    return;
+                }
+                
+                notification.recentMessageTimes[message] = new Date();
+
                 //Organize message
                 var newNotification = {
                     id: Date.now() + '',
@@ -77,38 +79,46 @@ var notification = {
                     message: message.data.message
                 };
 
-                notification.notifications[newNotification.id] = newNotification;
+                notification.getStatus(function (status) {
+                    notification.notifications[newNotification.id] = newNotification;
 
-                //Create chrome notification
-                chrome.notifications.create(newNotification.id, {
-                    type: "basic",
-                    iconUrl: newNotification.type == 'irp' && 'Content/notification-irp.png'
-                    || newNotification.type == 'visa' && 'Content/notification-visa.jpg'
-                    || 'icon.png',
-                    title: newNotification.title,
-                    message: newNotification.message,
-                    buttons: [{
-                        title: "Ignore All"
-                    }],
-                    isClickable: true
+                    if (status[newNotification.type]) {
+                        preset.getPreset(function (presets) {
+                            if (presets[newNotification.type]['Category']
+                                && presets[newNotification.type]['Category'] == newNotification.category
+                                && (newNotification.type != 'irp'
+                                    || presets[newNotification.type]['ConfirmGNIB'] == newNotification.subCategory))
+                                //Create chrome notification
+                                chrome.notifications.create(newNotification.id, {
+                                    type: "basic",
+                                    iconUrl: newNotification.type == 'irp' && 'Content/notification-irp.png'
+                                    || newNotification.type == 'visa' && 'Content/notification-visa.jpg'
+                                    || 'icon.png',
+                                    title: newNotification.title,
+                                    message: newNotification.message,
+                                    buttons: [{
+                                        title: "Ignore All"
+                                    }],
+                                    isClickable: true
+                                });
+
+                                //Listen notification
+                                !chrome.notifications.onClicked.hasListener(notification.tileListener)
+                                && chrome.notifications.onClicked.addListener(notification.tileListener);
+
+                                //Listen notification button
+                                !chrome.notifications.onButtonClicked.hasListener(notification.buttonListener)
+                                && chrome.notifications.onButtonClicked.addListener(notification.buttonListener);
+                            });
+                    }
                 });
-
-                //Listen notification
-                !chrome.notifications.onClicked.hasListener(notification.tileListener)
-                && chrome.notifications.onClicked.addListener(notification.tileListener);
-
-                //Listen notification button
-                !chrome.notifications.onButtonClicked.hasListener(notification.buttonListener)
-                && chrome.notifications.onButtonClicked.addListener(notification.buttonListener);
             };
 
             !chrome.gcm.onMessage.hasListener(messageListener) && chrome.gcm.onMessage.addListener(messageListener);
 
-            formStorage.save('notification-switch', true, function () {
-                notification.isListening = true;
-                
-                callback && callback();
-            });
+            notification.isListening = true;
+            
+            callback && callback();
         });
     },
 
@@ -135,10 +145,8 @@ var notification = {
                 var unsubscribeUrl = config.gcmUnsubscribeUrl;
                 unsubscribeUrl = unsubscribeUrl.replace("{type}", "GCM").replace("{key}", gcmToken);
                 $.post(unsubscribeUrl, function () {
-                    formStorage.save('notification-switch', false, function () {
-                        notification.isListening = false;
-                        callback && callback();
-                    });
+                    notification.isListening = false;
+                    callback && callback();
                 })
             });
         });
@@ -168,7 +176,7 @@ var notification = {
             backgroundPage
             && (backgroundPage.notification.status = status);
             
-            notification.restart();
+            notification.restart(callback);
         })
     },
 
