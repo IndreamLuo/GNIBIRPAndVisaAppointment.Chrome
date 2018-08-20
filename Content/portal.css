@@ -1,7 +1,7 @@
 .group {
     width: 400px;
-    margin-bottom: 25px;
-    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-top: 5px;
     position: relative;
 }
 
@@ -65,4 +65,9 @@
 
 .group .notification {
     background-color: #033c73;
+}
+
+.bottom {
+    padding: 2px;
+    background-color: #EEE;
 }
