@@ -2,7 +2,7 @@ var dates = {
     today: new Date(),
     
     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-    irpSlotTimeFormat: 'day monthWord year roundedHour:minute',
+    irpSlotTimeFormat: 'day monthWord year - roundedHour:minute',
     visaSlotTimeFormat: 'day/month/year hour:minute round',
     serviceTimeFormat: 'month/day/year hour:minute:second round',
 

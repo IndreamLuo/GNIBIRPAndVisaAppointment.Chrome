@@ -8,7 +8,7 @@ var notification = {
     recentMessageTimes: {},
 
     initialize: function () {
-        notification.turnOn();
+        notification.resubscribe();
     },
 
     notificationBase: function (title, message) {
@@ -16,41 +16,49 @@ var notification = {
         this.iconUrl = 'icon.png';
     },
 
-    turnOn: function (callback) {
+    resubscribe: function (callback) {
         var backgroundPage = chrome.extension.getBackgroundPage();
         if (backgroundPage && window != backgroundPage) {
-            return backgroundPage.notification.turnOn(callback);
+            return backgroundPage.notification.resubscribe(callback);
         }
 
         formStorage.retrieve('gcm-registered', function (registered) {
-            if (!notification.isListening) {
-                chrome.gcm.register([notification.senderId], function (gcmToken) {
-                    if (chrome.runtime.lastError) {
-                        console.log('gcm register error:' + chrome.runtime.lastError);
-                    } else {
-                        notification.getStatus(function (status) {
-                            preset.getPreset(function (presets) {
-
-                                $.ajax({
-                                    url: config.gcmSubscribeUrl,
-                                    method: 'POST',
-                                    data: JSON.stringify({
-                                        gcmToken: gcmToken,
-                                        irpCategory: (status && status.irp) ? presets.irp['Category'] : null,
-                                        irpSubCategory: (status && status.irp) ? (presets.irp['ConfirmGNIB'] == 'YES' ? 'Renewal' : 'New') : null,
-                                        visaCategory: (status && status.visa) ? presets.visa['AppointType'] : null
-                                    }),
-                                    dataType: "json",
-                                    contentType: 'application/json',
-                                    success: function () {
-                                        notification.listenGCM(gcmToken, callback);
-                                    }
+            chrome.gcm.register([notification.senderId], function (gcmToken) {
+                if (chrome.runtime.lastError) {
+                    console.log('gcm register error:' + chrome.runtime.lastError);
+                } else {
+                    formStorage.retrieve('gcmToken', function (savedGCMToken) {
+                        var updateSubscription = function () {
+                            notification.getStatus(function (status) {
+                                preset.getPreset(function (presets) {
+            
+                                    $.ajax({
+                                        url: config.gcmSubscribeUrl,
+                                        method: 'POST',
+                                        data: JSON.stringify({
+                                            gcmToken: gcmToken,
+                                            irpCategory: (status && status.irp) ? presets.irp['Category'] : null,
+                                            irpSubCategory: (status && status.irp) ? (presets.irp['ConfirmGNIB'] == 'YES' ? 'Renewal' : 'New') : null,
+                                            visaCategory: (status && status.visa) ? presets.visa['AppointType'] : null
+                                        }),
+                                        dataType: "json",
+                                        contentType: 'application/json',
+                                        success: function () {
+                                            notification.listenGCM(gcmToken, callback);
+                                        }
+                                    });
                                 });
                             });
-                        });
-                    }
-                });
-            }
+                        }
+
+                        if (gcmToken != savedGCMToken) {
+                            notification.unsubscribeUrl(updateSubscription);
+                        } else {
+                            updateSubscription();
+                        }
+                    });
+                }
+            });
         });
     },
 
@@ -59,12 +67,14 @@ var notification = {
             //Add GCM message listener
             var messageListener = function (message) {
                 //Don't publish if resent notification message exists
-                if (notification.recentMessageTimes[message._timestamp])
-                {
-                    return;
+                if (message._timestamp) {
+                    if (notification.recentMessageTimes[message._timestamp])
+                    {
+                        return;
+                    }
+                    
+                    notification.recentMessageTimes[message._timestamp] = new Date();
                 }
-                
-                notification.recentMessageTimes[message] = new Date();
 
                 //Organize message
                 var newNotification = {
@@ -135,26 +145,23 @@ var notification = {
         }
     },
 
-    turnOff: function (callback) {
+    unsubscribe: function (callback) {
         if (window != chrome.extension.getBackgroundPage()) {
-            return chrome.extension.getBackgroundPage().notification.turnOff(callback);
+            return chrome.extension.getBackgroundPage().notification.unsubscribe(callback);
         }
 
         chrome.gcm.unregister(function () {
             formStorage.retrieve("gcmToken", function (gcmToken) {
                 var unsubscribeUrl = config.gcmUnsubscribeUrl;
                 unsubscribeUrl = unsubscribeUrl.replace("{type}", "GCM").replace("{key}", gcmToken);
-                $.post(unsubscribeUrl, function () {
-                    notification.isListening = false;
-                    callback && callback();
-                })
+                $.post(unsubscribeUrl, callback);
             });
         });
     },
 
-    restart: function (callback) {
-        notification.turnOff(function () {
-            notification.turnOn(callback);
+    reset: function (callback) {
+        notification.unsubscribe(function () {
+            notification.resubscribe(callback);
         });
     },
 
@@ -176,7 +183,7 @@ var notification = {
             backgroundPage
             && (backgroundPage.notification.status = status);
             
-            notification.restart(callback);
+            notification.resubscribe(callback);
         })
     },
 
