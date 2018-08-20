@@ -38,7 +38,7 @@ var notification = {
                                         data: JSON.stringify({
                                             gcmToken: gcmToken,
                                             irpCategory: (status && status.irp) ? presets.irp['Category'] : null,
-                                            irpSubCategory: (status && status.irp) ? (presets.irp['ConfirmGNIB'] == 'YES' ? 'Renewal' : 'New') : null,
+                                            irpSubCategory: (status && status.irp) ? presets.irp['ConfirmGNIB'] : null,
                                             visaCategory: (status && status.visa) ? presets.visa['AppointType'] : null
                                         }),
                                         dataType: "json",
@@ -67,13 +67,15 @@ var notification = {
             //Add GCM message listener
             var messageListener = function (message) {
                 //Don't publish if resent notification message exists
-                if (message._timestamp) {
-                    if (notification.recentMessageTimes[message._timestamp])
+                if (message.data._timestamp) {
+                    var messageKey = message.data._timestamp + message.data.title + message.data.message;
+
+                    if (notification.recentMessageTimes[messageKey])
                     {
                         return;
                     }
                     
-                    notification.recentMessageTimes[message._timestamp] = new Date();
+                    notification.recentMessageTimes[messageKey] = new Date();
                 }
 
                 //Organize message
@@ -82,44 +84,54 @@ var notification = {
                     type: message.data.type.toLowerCase(),
                     category: message.data.category,
                     subCategory: message.data.subCategory,
-                    time: (message.data.type.toLowerCase() == 'irp'
-                        ? dates.toIRPSlotTime
-                        : dates.toVisaSlotTime)(dates.fromServiceTime(message.data.time)),
+                    time: message.data.type.toLowerCase() == 'link'
+                        ? ((message.data.type.toLowerCase() == 'irp'
+                            ? dates.toIRPSlotTime
+                            : dates.toVisaSlotTime)(dates.fromServiceTime(message.data.time)))
+                        : dates.fromServiceTime(message.data.time),
                     title: message.data.title,
-                    message: message.data.message
+                    message: message.data.message,
+                    url: message.data.url
                 };
 
                 notification.getStatus(function (status) {
                     notification.notifications[newNotification.id] = newNotification;
+                    //Create chrome notification
+                    var createChromeNotification = function() {
+                        chrome.notifications.create(newNotification.id, {
+                            type: "basic",
+                            iconUrl: newNotification.type == 'irp' && 'Content/notification-irp.png'
+                            || newNotification.type == 'visa' && 'Content/notification-visa.jpg'
+                            || 'icon.png',
+                            title: newNotification.title,
+                            message: newNotification.message,
+                            buttons: [{
+                                title: "Ignore All"
+                            }],
+                            isClickable: true
+                        });
 
-                    if (status[newNotification.type]) {
+                        //Listen notification
+                        !chrome.notifications.onClicked.hasListener(notification.tileListener)
+                        && chrome.notifications.onClicked.addListener(notification.tileListener);
+
+                        //Listen notification button
+                        !chrome.notifications.onButtonClicked.hasListener(notification.buttonListener)
+                        && chrome.notifications.onButtonClicked.addListener(notification.buttonListener);
+                    };
+
+                    if (newNotification.type == 'link') {
+                        createChromeNotification();
+                    } else if (status[newNotification.type]) {
                         preset.getPreset(function (presets) {
                             if (presets[newNotification.type]['Category']
                                 && presets[newNotification.type]['Category'] == newNotification.category
                                 && (newNotification.type != 'irp'
                                     || presets[newNotification.type]['ConfirmGNIB'] == newNotification.subCategory))
-                                //Create chrome notification
-                                chrome.notifications.create(newNotification.id, {
-                                    type: "basic",
-                                    iconUrl: newNotification.type == 'irp' && 'Content/notification-irp.png'
-                                    || newNotification.type == 'visa' && 'Content/notification-visa.jpg'
-                                    || 'icon.png',
-                                    title: newNotification.title,
-                                    message: newNotification.message,
-                                    buttons: [{
-                                        title: "Ignore All"
-                                    }],
-                                    isClickable: true
-                                });
-
-                                //Listen notification
-                                !chrome.notifications.onClicked.hasListener(notification.tileListener)
-                                && chrome.notifications.onClicked.addListener(notification.tileListener);
-
-                                //Listen notification button
-                                !chrome.notifications.onButtonClicked.hasListener(notification.buttonListener)
-                                && chrome.notifications.onButtonClicked.addListener(notification.buttonListener);
-                            });
+                            {
+                                createChromeNotification();
+                            }
+                        });
                     }
                 });
             };
@@ -135,7 +147,38 @@ var notification = {
     tileListener: function(notificationId) {
         chrome.notifications.clear(notificationId);
         var clickedNotification = notification.notifications[notificationId];
-        appointment.appoint(clickedNotification.type.toLowerCase(), clickedNotification.time);
+        
+        if (clickedNotification.type == 'link') {
+            chrome.windows.getCurrent(function (currentWindow) {
+                var focusOnNewTab = function (tab) {
+                    chrome.windows.update(tab.windowId, {
+                        focused: true
+                    });
+        
+                    chrome.tabs.update(tab.id, {
+                        active: true
+                    });
+                }
+
+                var openTab = function () {
+                    chrome.tabs.create({
+                        url: clickedNotification.url,
+                        active: false
+                    }, focusOnNewTab);
+                };
+    
+                currentWindow
+                ? openTab()
+                : chrome.windows.create({
+                    url: clickedNotification.url,
+                    focused: true
+                }, function (window) {
+                    focusOnNewTab(window.tabs[0]);
+                });
+            });
+        } else {
+            appointment.appoint(clickedNotification.type.toLowerCase(), clickedNotification.time);
+        }
     },
 
     buttonListener: function (notificationId, buttonIndex) {

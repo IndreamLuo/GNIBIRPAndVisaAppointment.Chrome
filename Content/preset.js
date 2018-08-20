@@ -292,6 +292,7 @@ var preset = {
     save: function (callback) {
         var data = preset.collectData();
         formStorage.save(preset.storageKey, data, function () {
+            notification.resubscribe();
             callback && callback();
         });
     },

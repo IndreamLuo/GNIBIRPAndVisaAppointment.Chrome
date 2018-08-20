@@ -6,6 +6,10 @@ var appointment = {
         if (!appointment.initialized) {
             chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 if (sender.tab && appointment.tabs[sender.tab.id] && request.autoFormCompleted) {
+                    chrome.windows.update(sender.tab.windowId, {
+                        focused: true
+                    });
+
                     chrome.tabs.update(sender.tab.id, {
                         active: true
                     });
