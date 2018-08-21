@@ -85,10 +85,10 @@ var notification = {
                     category: message.data.category,
                     subCategory: message.data.subCategory,
                     time: message.data.type.toLowerCase() == 'link'
-                        ? ((message.data.type.toLowerCase() == 'irp'
+                        ? dates.fromServiceTime(message.data.time)
+                        : ((message.data.type.toLowerCase() == 'irp'
                             ? dates.toIRPSlotTime
-                            : dates.toVisaSlotTime)(dates.fromServiceTime(message.data.time)))
-                        : dates.fromServiceTime(message.data.time),
+                            : dates.toVisaSlotTime)(dates.fromServiceTime(message.data.time))),
                     title: message.data.title,
                     message: message.data.message,
                     url: message.data.url

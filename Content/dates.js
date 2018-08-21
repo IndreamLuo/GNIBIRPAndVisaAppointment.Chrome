@@ -43,7 +43,7 @@ var dates = {
     fromServiceTime: function (serviceTime) {
         var splits = serviceTime.split(/[/ :]/);
         var day = parseInt(splits[1]);
-        var month = parseInt(splits[0]);
+        var month = parseInt(splits[0] - 1);
         var year = parseInt(splits[2]);
         var hour = parseInt(splits[3]);
         var minute = parseInt(splits[4]);

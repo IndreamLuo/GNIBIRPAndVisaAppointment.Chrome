@@ -1,7 +1,7 @@
 {
     "name": "GNIB/IRP and Visa Appointment",
     "description": "--to be finished--",
-    "version": "0.2.9",
+    "version": "1.0.0",
     "manifest_version": 2,
     "permissions": [
         "https://*/*",
