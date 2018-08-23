@@ -52,7 +52,7 @@ var notification = {
                         }
 
                         if (gcmToken != savedGCMToken) {
-                            notification.unsubscribeUrl(updateSubscription);
+                            notification.unsubscribe(updateSubscription);
                         } else {
                             updateSubscription();
                         }

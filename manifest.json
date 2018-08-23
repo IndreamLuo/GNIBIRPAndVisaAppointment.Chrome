@@ -1,7 +1,7 @@
 {
     "name": "GNIB/IRP and Visa Appointment",
     "description": "--to be finished--",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "manifest_version": 2,
     "permissions": [
         "https://*/*",
@@ -40,7 +40,13 @@
             "Content/form-injected.js",
             "Content/form-storage.js",
             "Content/preset.js"
+        ],
+        "css": [
+            "Content/form-injected.css"
         ]
     }],
+    "web_accessible_resources": [
+        "icon.png"
+    ],
     "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.gstatic.com/ https://connect.facebook.net/; object-src 'self'"
 }
