@@ -1,6 +1,6 @@
 {
     "name": "GNIB/IRP and Visa Appointment",
-    "description": "--to be finished--",
+    "description": "A tool for GNIB/IRP and Re-entry Visa appointment.",
     "version": "1.0.2",
     "manifest_version": 2,
     "permissions": [
