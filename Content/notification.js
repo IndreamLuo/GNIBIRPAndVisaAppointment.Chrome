@@ -182,6 +182,10 @@ var notification = {
     },
 
     buttonListener: function (notificationId, buttonIndex) {
+        if (buttonIndex < 0) {
+            return notification.tileListener(notificationId);
+        }
+
         for (var notificationId in notification.notifications) {
             chrome.notifications.clear(notificationId);
             notification.notifications[notificationId] = null;
