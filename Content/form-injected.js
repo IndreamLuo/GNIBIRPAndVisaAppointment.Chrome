@@ -63,6 +63,27 @@ $(document).ready(function () {
             autoFormCompleted: true
         });
     });
+    
+    var logoUrl = chrome.runtime.getURL("icon.png");
+
+    var logo = document.createElement('img');
+    $(logo)
+        .attr('src', logoUrl)
+        .addClass('gnibirpvisa-logo');
+
+    var releaseFindAppointmentButton = document.createElement('button');
+    $(releaseFindAppointmentButton)
+        .addClass('btn btn-warning release-find')
+        .append(logo)
+        .append('Release the Find button!')
+        .hide()
+        .click(function () {
+            $(btSrch4Apps).prop('disabled', false);
+            return false;
+        });
+ 
+    $(dvSelectSrch)
+        .append(releaseFindAppointmentButton);
 
     autoForm.onTimeSet(function () {
         if (typeof btSrch4Apps != 'undefined') {
