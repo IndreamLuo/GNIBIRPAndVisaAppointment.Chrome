@@ -63,7 +63,7 @@ $(document).ready(function () {
             autoFormCompleted: true
         });
     });
-    
+
     var logoUrl = chrome.runtime.getURL("icon.png");
 
     var logo = document.createElement('img');
@@ -76,7 +76,6 @@ $(document).ready(function () {
         .addClass('btn btn-warning release-find')
         .append(logo)
         .append('Release the Find button!')
-        .hide()
         .click(function () {
             $(btSrch4Apps).prop('disabled', false);
             return false;
