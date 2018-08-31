@@ -7,16 +7,15 @@ var decoders = {
         ? document.createElement('a')
         : document.createElement('span');
 
-        if (isPreset) {
-            appointmentContent.setAttribute('href', url);
-            appointmentContent.setAttribute('form-type', type);
-            appointmentContent.setAttribute('target', '_blank');
-            appointmentContent.setAttribute('time', time);
-            $(appointmentContent).click(function () {
+        appointmentContent.setAttribute('href', url);
+        appointmentContent.setAttribute('form-type', type);
+        appointmentContent.setAttribute('target', '_blank');
+        appointmentContent.setAttribute('time', time);
+        $(appointmentContent)
+            .click(function () {
                 appointment.appoint(type, time);
                 return false;
-            })
-        }
+            });
 
         appointmentContent.innerHTML = time;
         appointmentElement.appendChild(appointmentContent);
@@ -26,7 +25,7 @@ var decoders = {
 
     visa: function (type, data) {
         preset.getPreset(function (presets) {
-            var $list = decoders.$lists['visa'] || (decoders.$lists['visa'] = $('.visas .list'));
+            var $list = decoders.$lists['visa'] || (decoders.$lists['visa'] = $('.visa'));
 
             if (data.dates && data.dates.length && data.dates[0] != "01/01/1900") {
                 var isPreset = presets.visa.AppointType == type;
@@ -55,19 +54,20 @@ var decoders = {
 
     irp: function (type, data) {
         preset.getPreset(function (presets) {
-            var $list = decoders.$lists['irp'] || (decoders.$lists['irp'] = $('.irps .list'));
+            var $list = decoders.$lists['irp'] || (decoders.$lists['irp'] = $('.irp'));
+            var $types = decoders.$getTypeGroup($list, type);
 
             if (data.slots && data.slots.length) {
                 var isPreset = presets.irp.Category
                 && presets.irp.ConfirmGNIB
                 && type == presets.irp.Category + '-' + presets.irp.ConfirmGNIB;
                 
-                var $types = decoders.$getTypeGroup($list, type);
                 for (var index in data.slots) {
                     var appointment = data.slots[index];
-                    
                     $types.append(decoders._getAppointmentDiv('irp', appointment.time, isPreset, 'https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm&selected=true'));
                 }
+            } else {
+                $types.append('<span class="no-valid">No valid</span>');
             }
 
             statusControl.removeLoading('irp');
@@ -77,6 +77,8 @@ var decoders = {
     $lists: {},
 
     $getTypeGroup: function ($list, type) {
+        return $list.find('.' + type);
+
         if (!$list.find('[type=' + type + ']').length) {
             !$list.append('<div class="typegroup" type="' + type + '"><div class="type">' + type + '</div></div>');
         }
@@ -86,9 +88,11 @@ var decoders = {
 };
 
 var statusControl = {
+    itemsCount: {},
     loadings: {},
     addLoading: function (group) {
         statusControl.loadings[group] = (statusControl.loadings[group] || 0) + 1;
+        statusControl.itemsCount[group] = (statusControl.itemsCount[group] || 0) + 1;
     },
     removeLoading: function (group) {
         statusControl.loadings[group]--;
@@ -121,9 +125,18 @@ $(document).ready(function () {
         return false;
     });
 
+    var loaded = 0;
     appointment.getNewestAppointments(function (group) {
         statusControl.addLoading(group);
     }, function (group, category, data) {
+        if (group == 'irp') {
+            $('.progress-bar').width((++loaded / 6) * 100 + '%');
+            if (loaded == 3) {
+                $('.progress-bar').removeClass('bg-warning').addClass('bg-primary');
+            } else if (loaded == 6) {
+                $('.progress-bar').removeClass('bg-primary').addClass('bg-success');
+            }
+        }
         decoders[group](category, data);
     });
 

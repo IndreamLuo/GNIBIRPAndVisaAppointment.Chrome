@@ -1,80 +1,27 @@
 body {
-    padding-bottom: 20px;
+    padding-bottom: 40px;
+    width: 550px;
 }
 
-.group {
-    width: 400px;
-    margin-bottom: 10px;
-    margin-top: 5px;
-    position: relative;
+.logo {
+    width: 20px;
 }
 
-.group .list {
-    min-height: 100px;
-}
-
-.irps .list {
-    /* background-image: url('irp-card.png'); */
-    border-left: solid 2px #ffc8ef;
-    background-size: 100%;
-}
-
-.visas .list {
-    /* background-image: url('irish-visa.jpg'); */
-    border-left: solid 2px #a8c7a1;
-    background-size: 100%;
-}
-
-.group .loading {
-    height: 50px;
-}
-
-.group .list .typegroup {
-    position: relative;
-    margin-bottom: 5px;
-    padding-bottom: 5px;
-    padding-left: 130px;
-    min-height: 30px;
-}
-
-.group .list .typegroup .type {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    padding: 2px;
-    background-color: #EEE;
-    text-align: center;
-    width: 120px;
-}
-
-.group .list .appointment {
-    background: rgba(255, 255, 255, 0.7);
-    padding: 2px;
-}
-
-.group .list .empty {
-    padding: 15px;
-    font-size: 15px;
+.no-valid {
     color: red;
 }
 
-.group .appoint {
-    background-color: #449d44;
+.table {
+    margin-bottom: 0;
 }
 
-.group .preset {
-    background-color: #31b0d5;
-}
-
-.group .notification {
-    background-color: #033c73;
-}
-
-.bottom {
+.waiting {
     position: fixed;
+    top: 0;
     bottom: 0;
-    width: 100%;
-    padding: 2px;
-    background-color: #EEE;
+    left: 0;
+    right: 0;
+    background-color: #99999999;
+    z-index: 10;
+    display: none;
 }

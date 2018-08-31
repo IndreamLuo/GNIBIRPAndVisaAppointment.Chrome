@@ -55,17 +55,6 @@ table[class~=form] {
     display: inline-block;
 }
 
-.waiting {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #99999999;
-    z-index: 10;
-    display: none;
-}
-
 .buttons {
     text-align: left;
 }

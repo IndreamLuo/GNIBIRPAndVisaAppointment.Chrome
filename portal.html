@@ -4,6 +4,9 @@
         <script type="text/javascript" src="Content/firebase.initialization.js"></script>
         <script type="text/javascript" src="Content/jquery-3.3.1.min.js"></script>
 
+        <script type="text/javascript" src="Bootstrap/js/bootstrap.js"></script>
+        <link type="text/css" rel="stylesheet" href="Bootstrap/css/bootstrap.css" />
+
         <script type="text/javascript" src="Content/config.js"></script>
         <script type="text/javascript" src="Content/dates.js"></script>
         <script type="text/javascript" src="Content/appointment-apis.js"></script>
@@ -12,86 +15,113 @@
         <script type="text/javascript" src="Content/preset.js"></script>
         <script type="text/javascript" src="Content/notification.js"></script>
         <script type="text/javascript" src="Content/appointment.js"></script>
-        <link type="text/css" rel="stylesheet" href="Content/master.css" />
 
         <script type="text/javascript" src="Content/portal.js"></script>
         <link type="text/css" rel="stylesheet" href="Content/portal.css" />
     </head>
     <body>
         <script type="text/javascript" src="Content/facebook.sdk.js"></script>
-        <div class="information">
-            <ul>
-                <li>Use Preset to speed up your appointment.</li>
-                <li>Your preset type of appointment will be highlighted and applied to appointment and notification will be valid.</li>
-                <li>
-                    <a href="http://gnibirpvisa.azurewebsites.net/info/about-chrome-extension-app-notification" target="_blank">
-                        The notification function is in test status.
-                    </a>
-                </li>
-            </ul>
-        </div>
 
-        <div class="irps group">
-            <div class="header">
-                GNIB / IRP:
-            </div>
-            <img class="title-image" src="Content/notification-irp.png" />
-            <div class="list">
-                <img class="loading" src="Content/loading.gif" />
-            </div>
-            <a class="button appoint" form-type="irp" target="_blank" href="https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm">
-                Appoint
+        <nav class="navbar navbar-expand-sm navbar-light bg-light">
+            <a class="navbar-brand" href="http://gnibirpvisa.ie">
+                <img class="logo" src="icon.png" />
+                GNIB / IRP & Visa Appointment
             </a>
-            <a class="button preset" target="_self" href="preset.irp.html">
-                Preset
-            </a>
-            <!-- <a class="button notification" target="_self" href="notification.html">
-                Notification
-            </a> -->
-            <span>
-                Notification (Test):
-                <input class="notification-switch" notification-type="irp" type="checkbox" />
-            </span>
-        </div>
+            <div class="my-lg-0">
+                <a class="btn btn-outline-primary btn-sm" href="http:/gnibirpvisa.ie/Donate" target="_blank">Donate</a>
+            </div>
+        </nav>
         
-        <div class="visas group">
-            <div class="header">
-                Visa:
-            </div>
-            <h3>
-                <a href="http://www.inis.gov.ie/en/INIS/Pages/Re-entry+visas" target="_blank">Only emergency will be accepted from 3 Sep 2018.</a>
-            </h3>
-            <img class="title-image" src="Content/notification-visa.jpg" />
-            <div class="list">
-                <img class="loading" src="Content/loading.gif" />
-            </div>
-            <a class="button appoint" form-type="visa" target="_blank" href="https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/AppointmentSelection?OpenForm">
-                Appoint
-            </a>
-            <a class="button preset" target="_self" href="preset.visa.html">
-                Preset
-            </a>
-            <!-- <a class="button notification" target="_self" href="notification.html">
-                Notification
-            </a> -->
-            <span>
-                Notification (Test):
-                <input class="notification-switch" notification-type="visa" type="checkbox" />
-            </span>
-        </div>
+        <h5 class="py-1 pr-2 text-right">GNIB / IRP</h5>
+        <table class="irp table table-sm">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th scope="col">New</th>
+                    <th scope="col">Renewal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Work</th>
+                    <td class="work-new"></td>
+                    <td class="work-renewal"></td>
+                </tr>
+                <tr>
+                    <th>Study</th>
+                    <td class="study-new"></td>
+                    <td class="study-renewal"></td>
+                </tr>
+                <tr>
+                    <th>Other</th>
+                    <td class="other-new"></td>
+                    <td class="other-renewal"></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">
+                        <div class="progress mb-2" style="height: 5px">
+                            <div class="progress-bar bg-warning" role="progressbar"></div>
+                        </div>
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <a class="btn btn-success appoint" form-type="irp" href="https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect?OpenForm">Appoint</a>
+                            </div>
+                            <div class="col-auto">
+                                <a class="btn btn-primary preset" target="_self" href="preset.irp.html">Preset</a>
+                            </div>
+                            <div class="col-auto my-2">
+                                <span class="custom-control custom-checkbox mb-3">
+                                    <input type="checkbox" class="custom-control-input notification-switch" notification-type="irp" id="turnOnNotification" />
+                                    <label class="custom-control-label" for="turnOnNotification">Notification</label>
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
 
-        <div class="bottom">
-            @<a href="http://gnibirpvisa.ie">GNIBIRPVisa.ie</a>
-            /
-            <a href="https://www.facebook.com/gnibirpvisa/">Our Facebook Page</a>
+        <h5 class="py-1 pr-2 text-right">Visa</h5>
+        <div class="alert alert-warning">
+            <a href="http://www.inis.gov.ie/en/INIS/Pages/Re-entry+visas" target="_blank">Only emergency will be accepted from 3 Sep 2018.</a>
+            I'll be following the actual situation.
+            Feel free to contact if you need help.
+        </div>
+        <table class="visa table table-sm">
+            <tbody>
+                <tr>
+                    <th scope="row">Emergency</th>
+                    <td class="emergency"></td>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">
+                        <div class="form-row align-items-left">
+                            <div class="col-auto">
+                                <a class="btn btn-success appoint" href="https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/AppointmentSelection?OpenForm">Appoint</a>
+                            </div>
+                            <div class="col-auto">
+                                <a class="btn btn-primary preset" target="_self" href="preset.visa.html">Preset</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="fixed-bottom bg-light">
+            <a class="btn btn-link" href="http://gnibirpvisa.ie">GNIBIRPVisa.ie</a>
+            |
+            <a class="btn btn-link" href="https://www.facebook.com/gnibirpvisa/">Facebook Page</a>
         </div>
 
         <div class="waiting">
-            <div class="information">
-                Opening appointment page and auto filling in your form. Please wait until it's finished.<br />
-                The extension will be closed automatically after.
+            <div class="alert alert-danger">
+                Don't close. Auto-filling your form from Preset.
             </div>
-            <img class="loading" src="Content/loading.gif" />
+            <img class="rounded mx-auto d-block" style="width: 200px" src="Content/loading.gif" />
         </div>
     </body>
 </html>

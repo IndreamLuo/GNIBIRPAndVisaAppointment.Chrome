@@ -12,13 +12,13 @@ var appointmentAPIs = {
     },
     
     'visa': {
-        'Individual': {
-            url: 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/(getDTAvail)?openagent&type=I'
-        },
+        // 'Individual': {
+        //     url: 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/(getDTAvail)?openagent&type=I'
+        // },
         
-        'Family': {
-            url: 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/(getDTAvail)?openagent&type=F',
-        },
+        // 'Family': {
+        //     url: 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/(getDTAvail)?openagent&type=F',
+        // },
         
         'Emergency': {
             getDirectData: function () {
