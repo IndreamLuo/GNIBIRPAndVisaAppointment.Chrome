@@ -109,6 +109,10 @@ var statusControl = {
 };
 
 $(document).ready(function () {
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+    
     var oldAppoint = appointment.appoint;
     appointment.appoint = function(type, time) {
         $('.waiting').fadeIn('fast', function () {
