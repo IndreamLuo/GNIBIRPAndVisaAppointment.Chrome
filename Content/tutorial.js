@@ -58,7 +58,7 @@ var tutorial = {
         tutorial.$next.show();
 
         tutorial.$tutorial.fadeIn('fast', function () {
-            tutorial.$description.slideDown('slow');
+            tutorial.$description.fadeIn('slow');
         });
         tutorial.slides = script.slides;
         tutorial.slideIndex = -1;
@@ -155,7 +155,7 @@ var tutorial = {
     },
 
     finish: function () {
-        tutorial.$description.slideUp('fast', function () {
+        tutorial.$description.fadeOut('fast', function () {
             tutorial.$tutorial.fadeOut('slow');
         });
     }
