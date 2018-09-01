@@ -123,10 +123,15 @@ var tutorial = {
 
         var fixedFocusOnItem = function () {
             $('.tutorial .tutorial-bg').addClass('.tutorial-fixed');
+            var scrollTop = $(document.body).scrollTop();
+            var fixedDuration = animateDuration;
+            if (scrollTop > 300) {
+                fixedDuration = (animateDuration = animateDuration / 2);
+            }
             $(document.body).animate({
                 scrollTop: 0
             }, {
-                duration: 400,
+                duration: fixedDuration,
                 complete: function () {
                     position = slide.$item.offset();
                     top = position.top;
