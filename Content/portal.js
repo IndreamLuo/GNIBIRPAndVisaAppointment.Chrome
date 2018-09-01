@@ -165,6 +165,7 @@ $(document).ready(function () {
                 description: 'After Preset, the notification for your category will be available. Clicking the popup notification gives you quick access to the newest available appointment also with the time selected.'
             }, {
                 $item: $('.donate'),
+                fixed: true,
                 description: 'This is an open source project, feel free to find the code source in Donate page and your donation will be very appreciated.'
             }]
         });

@@ -92,32 +92,61 @@ var tutorial = {
         var bottom = position.top + height;
         var left = position.left;
         var right = position.left + width;
-        var animateDuration = 1200;
+        var animateDuration = 800;
         
-        tutorial.$top.animate({
-            height: top
-        }, {
-            duration: animateDuration
-        });
-        tutorial.$left.animate({
-            top: top,
-            height: height,
-            width: left
-        }, {
-            duration: animateDuration
-        });
-        tutorial.$right.animate({
-            top: top,
-            height: height,
-            left: right
-        }, {
-            duration: animateDuration
-        });
-        tutorial.$bottom.animate({
-            top: bottom
-        }, {
-            duration: animateDuration
-        })
+        var focusOnItem = function () {
+            tutorial.$top.animate({
+                height: top
+            }, {
+                duration: animateDuration
+            });
+            tutorial.$left.animate({
+                top: top,
+                height: height,
+                width: left
+            }, {
+                duration: animateDuration
+            });
+            tutorial.$right.animate({
+                top: top,
+                height: height,
+                left: right
+            }, {
+                duration: animateDuration
+            });
+            tutorial.$bottom.animate({
+                top: bottom
+            }, {
+                duration: animateDuration
+            });
+        }
+
+        var fixedFocusOnItem = function () {
+            $('.tutorial .tutorial-bg').addClass('.tutorial-fixed');
+            $(document.body).animate({
+                scrollTop: 0
+            }, {
+                duration: 400,
+                complete: function () {
+                    position = slide.$item.offset();
+                    top = position.top;
+                    bottom = position.top + height;
+                    focusOnItem();
+                }
+            });
+        }
+        
+        $('.tutorial .tutorial-bg').removeClass('.tutorial-fixed');
+        if (slide.fixed) {
+            fixedFocusOnItem();
+        } else {
+            $(document.body).animate({
+                scrollTop: top - 200
+            }, {
+                duration: animateDuration
+            });
+            focusOnItem();
+        }
     },
 
     finish: function () {

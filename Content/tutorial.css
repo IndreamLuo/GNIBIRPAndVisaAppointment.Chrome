@@ -1,3 +1,7 @@
+body {
+    position: relative;
+}
+
 .tutorial {
     z-index: 1031;
     position: absolute;
@@ -11,6 +15,10 @@
 .tutorial-bg {
     background-color: rgba(100, 100, 100, 0.7);
     position: absolute;
+}
+
+.tutorial-fixed {
+    position: fixed;
 }
 
 .tutorial-bg-top {
