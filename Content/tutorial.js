@@ -124,7 +124,7 @@ var tutorial = {
         var fixedFocusOnItem = function () {
             $('.tutorial .tutorial-bg').addClass('.tutorial-fixed');
             var scrollTop = $(document.body).scrollTop();
-            var fixedDuration = animateDuration;
+            var fixedDuration = 50;
             if (scrollTop > 300) {
                 fixedDuration = (animateDuration = animateDuration / 2);
             }
