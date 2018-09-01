@@ -108,11 +108,7 @@ var statusControl = {
     }
 };
 
-$(document).ready(function () {
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    });
-    
+$(document).ready(function () {    
     var oldAppoint = appointment.appoint;
     appointment.appoint = function(type, time) {
         $('.waiting').fadeIn('fast', function () {
@@ -146,5 +142,31 @@ $(document).ready(function () {
 
     $('.notification-switch').each(function () {
         notification.setSwitch(this);
+    });
+
+    tutorial.initialize();
+
+    $('.tutorial-play').click(function () {
+        tutorial.play({
+            slides: [{
+                $item: $('.table'),
+                description: 'The table shows current available appointments. "No valid" when no available appointment.'
+            }, {
+                $item: $('.preset'),
+                description: 'Use Preset to save your application before appointment.'
+            }, {
+                $item: $('.appoint'),
+                description: 'When you click appoint after Preset, the Preset content will be filled in for you automatically.'
+            }, {
+                $item: $('.table tbody tr td'),
+                description: 'The available appointment in the category you selected in Preset will be highlighted and clickable. Clicking it will open the application form with the time selected.'
+            }, {
+                $item: $('.custom-checkbox'),
+                description: 'After Preset, the notification for your category will be available. Clicking the popup notification gives you quick access to the newest available appointment also with the time selected.'
+            }, {
+                $item: $('.donate'),
+                description: 'This is an open source project, feel free to find the code source in Donate page and your donation will be very appreciated.'
+            }]
+        });
     });
 });

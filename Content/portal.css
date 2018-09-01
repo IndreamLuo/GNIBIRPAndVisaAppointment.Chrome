@@ -1,12 +1,3 @@
-body {
-    padding-bottom: 40px;
-    width: 550px;
-}
-
-.logo {
-    width: 20px;
-}
-
 .no-valid {
     color: red;
 }

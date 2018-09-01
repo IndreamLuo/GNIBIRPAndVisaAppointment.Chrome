@@ -1,10 +1,16 @@
 <html>
     <head>
         <script type="text/javascript" src="Content/jquery-3.3.1.min.js"></script>
+        
+        <script type="text/javascript" src="Bootstrap/popper.min.js"></script>
+        <script type="text/javascript" src="Bootstrap/js/bootstrap.js"></script>
+        <link type="text/css" rel="stylesheet" href="Bootstrap/css/bootstrap.css" />
+        
         <script type="text/javascript" src="Content/dates.js"></script>
         <script type="text/javascript" src="Content/visa.js"></script>
         <script type="text/javascript" src="Content/form-storage.js"></script>
         <script type="text/javascript" src="Content/form-assistant.js"></script>
+        <script type="text/javascript" src="Content/master.js"></script>
         <link type="text/css" rel="stylesheet" href="Content/master.css" />
 
         <script type="text/javascript" src="Content/config.js"></script>
@@ -14,19 +20,16 @@
         <link type="text/css" rel="stylesheet" href="Content/preset.visa.css" />
     </head>
     <body>
-        <div class="header">
-            Visa Appointment:
-        </div>
-        <div class="information">
-            <ul>
-                <li>
-                    Your preset selections will be filled in automatically in appointment.
-                </li>
-                <li>
-                    Your information is stored locally and won't sync with your other devices.
-                </li>
-            </ul>
-        </div>
+        <nav class="navbar navbar-expand-sm navbar-light bg-light fixed-top">
+            <a class="navbar-brand" href="http://gnibirpvisa.ie">
+                <img class="logo" src="icon.png" />
+                GNIB / IRP & Visa Appointment
+            </a>
+            <div class="my-lg-0">
+                <a class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="This is an open source project." href="http:/gnibirpvisa.ie/Donate" target="_blank">Donate</a>
+            </div>
+        </nav>
+        
         <div style="position: relative;">
             <img class="form-image" src="Content/irish-visa.jpg" />
             <table class="form" form-type="visa" is-preset="true">
@@ -124,16 +127,23 @@
                 </tr>
             </table>
         </div>
+
         <div class="buttons">
-            <a class="button save" target="_self" href="portal.html">
+            <a class="btn btn-success mx-2 save" target="_self" href="portal.html">
                 Save
             </a>
-            <a class="button clear" target="_self" href="#">
+            <a class="btn btn-primary mx-2 clear" target="_self" href="#">
                 Clear
             </a>
-            <a class="button cancel" target="_self" href="portal.html">
+            <a class="btn btn-danger  mx-2 cancel" target="_self" href="portal.html">
                 Cancel
             </a>
+        </div>
+
+        <div class="fixed-bottom bg-light">
+            <a class="btn btn-link" href="http://gnibirpvisa.ie">GNIBIRPVisa.ie</a>
+            |
+            <a class="btn btn-link" href="https://www.facebook.com/gnibirpvisa/">Facebook Page</a>
         </div>
     </body>
 </html>

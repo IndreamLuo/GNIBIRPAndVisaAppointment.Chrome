@@ -1,3 +1,13 @@
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+    width: 550px;
+}
+
+.logo {
+    width: 20px;
+}
+
 .header {
     font-size: 20;
     font-weight: bold;
@@ -13,13 +23,9 @@ ul, ol {
     margin-bottom: 0;
 }
 
-table[class~=form] {
-    min-width: 600px;
-}
-
 .form {
-    margin-bottom: 5px;
     font-size: 13px;
+    padding: 5px;
 }
 
 .form tr td:first-child {
@@ -34,7 +40,6 @@ table[class~=form] {
 }
 
 .form tr td:last-child {
-    min-width: 300px;
     padding: 3px;
     text-align: left;
 }
@@ -56,7 +61,7 @@ table[class~=form] {
 }
 
 .buttons {
-    text-align: left;
+    text-align: right;
 }
 
 .button {
@@ -78,7 +83,7 @@ table[class~=form] {
 .form-image {
     position: absolute;
     width: 100%;
-    top: 0;
+    top: 50px;
     right: 0;
     z-index: -1;
     opacity: 0.2;

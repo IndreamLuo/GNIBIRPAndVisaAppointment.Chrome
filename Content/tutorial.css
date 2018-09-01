@@ -1,0 +1,49 @@
+.tutorial {
+    z-index: 1031;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: none;
+}
+
+.tutorial-bg {
+    background-color: rgba(100, 100, 100, 0.7);
+    position: absolute;
+}
+
+.tutorial-bg-top {
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.tutorial-bg-bottom {
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.tutorial-bg-left {
+    left: 0;
+}
+
+.tutorial-bg-right {
+    right: 0;
+}
+
+.tutorial .description {
+    display: none;
+    padding: 10px;
+    padding-right: 100px;
+    min-height: 60px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.tutorial .next, .tutorial .finish {
+    position: fixed;
+    right: 30px;
+    bottom: 10px;
+    z-index: 1032;
+}
