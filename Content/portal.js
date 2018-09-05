@@ -126,12 +126,16 @@ $(document).ready(function () {
     });
 
     var loaded = 0;
+    var apiCount = 6;
+    $('.progress-bar').width(1 / (apiCount + 1) * 100 + '%');
     appointment.getNewestAppointments(function (group) {
         statusControl.addLoading(group);
     }, function (group, category, data) {
         if (group == 'irp') {
-            $('.progress-bar').width((++loaded / 6) * 100 + '%');
-            if (loaded == 3) {
+            $('.progress-bar').width((++loaded + 1) /  (apiCount + 1) * 100 + '%');
+            if (loaded == 2) {
+                $('.progress-bar').removeClass('bg-danger').addClass('bg-warning');
+            } if (loaded == 5) {
                 $('.progress-bar').removeClass('bg-warning').addClass('bg-primary');
             } else if (loaded == 6) {
                 $('.progress-bar').removeClass('bg-primary').addClass('bg-success');
