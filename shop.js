@@ -6,7 +6,9 @@ var shop = {
 
             },
             'failure': function (error) {
+                if (error == '') {
 
+                }
             }
           });
     },
@@ -14,6 +16,31 @@ var shop = {
     ui: {
         $getItem: function () {
 
+        }
+    },
+
+    testData: {
+        "response": {
+            "details": {
+                "kind": "chromewebstore#inAppProductList",
+                "inAppProducts": [{
+                    "kind": "chromewebstore#inAppProduct",
+                    "sku": "70darkchocolate",
+                    "item_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "type": "inapp",
+                    "state": "ACTIVE",
+                    "prices": [{
+                        "valueMicros": "990000",
+                        "currencyCode": "USD",
+                        "regionCode": "US"
+                    }],
+                    "localeData": [{
+                        "title": "Dark Chocolate (70%)",
+                        "description": "The best chocolate available.",
+                        "languageCode": "all"
+                    }]
+                }]
+            }
         }
     }
 };
