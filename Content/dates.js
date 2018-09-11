@@ -83,6 +83,20 @@ var dates = {
         .replace('round', round);
     },
 
+    //From DDMMYY, like 030418
+    fromShortDate: function (dateString) {
+        console.log('Date: ' + dateString);
+        if (dateString.length) {
+            var day = dateString.substring(0, 2);
+            var month = dateString.substring(2, 4) - 1;
+            var year = '20' + dateString.substring(4);
+
+            return new Date(year, month, day);
+        }
+
+        return null;
+    },
+
     getMonths: function (year) {
         var getMonthsForYear= function (leap) {
             var yearMonthsName = (leap && 'leap' || 'normal') + 'YearMonths';
