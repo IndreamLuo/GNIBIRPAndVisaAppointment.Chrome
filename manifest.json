@@ -1,7 +1,7 @@
 {
     "name": "GNIB/IRP and Visa Appointment",
     "description": "A tool for GNIB/IRP and Re-entry Visa appointment.",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "manifest_version": 2,
     "permissions": [
         "https://*/*",
@@ -35,12 +35,12 @@
     "content_scripts": [{
         "matches": ["https://burghquayregistrationoffice.inis.gov.ie/Website/AMSREG/AMSRegWeb.nsf/AppSelect*", "https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/AppointmentSelection*"],
         "js": [
-            "config.js",
             "Content/jquery-3.3.1.min.js",
             "Content/form-assistant.js",
             "Content/form-injected.js",
             "Content/form-storage.js",
-            "Content/preset.js"
+            "Content/preset.js",
+            "config.js"
         ],
         "css": [
             "Content/form-injected.css"
