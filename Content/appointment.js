@@ -5,10 +5,6 @@ var appointment = {
         //Inject files and codes when tabs opened
         if (!appointment.initialized) {
             chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-                if (request.unusefulReCaptcha) {
-                    $.post(config.logUnusefulReCaptchaUrl, request.unusefulReCaptcha);
-                }
-
                 if (sender.tab && appointment.tabs[sender.tab.id] && request.autoFormCompleted) {
                     chrome.windows.update(sender.tab.windowId, {
                         focused: true
