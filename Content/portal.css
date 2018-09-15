@@ -16,3 +16,7 @@
     z-index: 10;
     display: none;
 }
+
+.proxy {
+    display: none;
+}

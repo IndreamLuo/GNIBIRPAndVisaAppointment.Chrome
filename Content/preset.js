@@ -100,6 +100,24 @@ var preset = {
                         } else if (preset.isRadio(input)) {
                             input.checked = (typeof inputData.value != 'undefined') ? inputData.value : input.checked;
                         } else {
+                            if ((input.id.indexOf('DD') >= 0 || input.id.indexOf('MM') >= 0)
+                                && inputData.value.length <2) {
+                                inputData.value = '0' + inputData.value;
+                            } else if ((input.id == 'DOB' || input.id == 'GNIBExDT') && input.value.length < 10) {
+                                var digits = inputData.value.split('/');
+                                inputData.value = '';
+                                for (var digitIndex in digits) {
+                                    var digit = digits[digitIndex];
+                                    if (digit.length < 2) {
+                                        inputData.value = inputData.value + '0';
+                                    }
+                                    inputData.value = inputData.value + digit;
+                                    if (digit.length < 4) {
+                                        inputData.value = inputData.value + '/';
+                                    }
+                                }
+                            }
+
                             input.value = inputData.value
                         }
                         

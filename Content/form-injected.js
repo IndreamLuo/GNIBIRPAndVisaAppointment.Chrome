@@ -56,67 +56,80 @@ var messageListener = function (request, sender, sendResponse) {
 && chrome.runtime.onMessage.addListener(messageListener);
 
 
-
-$(document).ready(function () {
-    autoForm.onComplete(function () {
-        chrome.runtime.sendMessage({
-            autoFormCompleted: true
-        });
-    });
-
-    var logoUrl = chrome.runtime.getURL("icon.png");
-
-    var logo = document.createElement('img');
-    $(logo)
-        .attr('src', logoUrl)
-        .addClass('gnibirpvisa-logo');
-
-    var releaseFindAppointmentButton = document.createElement('button');
-    $(releaseFindAppointmentButton)
-        .addClass('btn btn-warning release-find')
-        .append(logo)
-        .append('Release the Find button!')
-        .click(function () {
-            $(btSrch4Apps).prop('disabled', false);
-            return false;
-        });
- 
-    $(dvSelectSrch)
-        .append(releaseFindAppointmentButton);
-
-    autoForm.onTimeSet(function () {
-        if (typeof btSrch4Apps != 'undefined') {
-            formAssistant.run(function () {
-                $(btSrch4Apps).click(function () {
-                    var interval; var hello;
-
-                    selectedTime
-                    && (interval = setInterval(function () {
-                        if ($(dvAppOptions).css('display') == 'block') {
-                            selectedTime && $("td:contains(" + selectedTime + ")").parent().find("button").click();
-                            clearInterval(interval);
-                        }
-                    }));
-                });
+var url = new URL(window.location.href);
+if (url.searchParams.get('proxy')) {
+    
+} else {
+    $(document).ready(function () {
+        autoForm.onComplete(function () {
+            chrome.runtime.sendMessage({
+                autoFormCompleted: true
             });
-        } else if (selectedTime && typeof Appdate != 'undefined') {
-            //Click 'Find Appointment Slot'
-            formAssistant.run(function () {
-                if (AppointType.value) {
-                    //Select date
-                    var selectedDate = selectedTime.substring(0, 10);
-                    Appdate.value = selectedDate;
-                    $(Appdate).change();
-                    //Click search
-                    $('button[onclick*=getAvailApps]').click();
-                    var interval = setInterval(function () {
-                        if ($(dvAppOptions).css('display') == 'block') {
-                            selectedTime && $("td:contains(" + selectedTime + ")").parent().find("button").click();
-                            clearInterval(interval);
-                        }
+        });
+    
+        var logoUrl = chrome.runtime.getURL("icon.png");
+    
+        var logo = document.createElement('img');
+        $(logo)
+            .attr('src', logoUrl)
+            .addClass('gnibirpvisa-logo');
+    
+        var releaseFindAppointmentButton = document.createElement('button');
+        $(releaseFindAppointmentButton)
+            .addClass('btn btn-warning release-find')
+            .append(logo)
+            .append('Release the Find button!')
+            .click(function () {
+                $(btSrch4Apps).prop('disabled', false);
+                return false;
+            });
+     
+        $(dvSelectSrch)
+            .append(releaseFindAppointmentButton);
+
+        var $toggleFooter = $('<a href="#" class="btn btn-dark toggle-footer"></a>')
+            .append($(logo).clone())
+            .append('Hide/Show Fottor')
+            .click(function () {
+                $('.footer').toggle();
+                return false;
+            });
+        $('.footer-v1').before($toggleFooter);
+    
+        autoForm.onTimeSet(function () {
+            if (typeof btSrch4Apps != 'undefined') {
+                formAssistant.run(function () {
+                    $(btSrch4Apps).click(function () {
+                        var interval; var hello;
+    
+                        selectedTime
+                        && (interval = setInterval(function () {
+                            if ($(dvAppOptions).css('display') == 'block') {
+                                selectedTime && $("td:contains(" + selectedTime + ")").parent().find("button").click();
+                                clearInterval(interval);
+                            }
+                        }));
                     });
-                }
-            });
-        }
+                });
+            } else if (selectedTime && typeof Appdate != 'undefined') {
+                //Click 'Find Appointment Slot'
+                formAssistant.run(function () {
+                    if (AppointType.value) {
+                        //Select date
+                        var selectedDate = selectedTime.substring(0, 10);
+                        Appdate.value = selectedDate;
+                        $(Appdate).change();
+                        //Click search
+                        $('button[onclick*=getAvailApps]').click();
+                        var interval = setInterval(function () {
+                            if ($(dvAppOptions).css('display') == 'block') {
+                                selectedTime && $("td:contains(" + selectedTime + ")").parent().find("button").click();
+                                clearInterval(interval);
+                            }
+                        });
+                    }
+                });
+            }
+        });
     });
-});
+}

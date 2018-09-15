@@ -37,14 +37,17 @@
         "js": [
             "Content/jquery-3.3.1.min.js",
             "Content/form-assistant.js",
-            "Content/form-injected.js",
+            "config.js",
             "Content/form-storage.js",
             "Content/preset.js",
-            "config.js"
+            "Content/appointment-apis.js",
+            "Content/appointment.js",
+            "Content/form-injected.js"
         ],
         "css": [
             "Content/form-injected.css"
-        ]
+        ],
+        "all_frames": true
     }],
     "web_accessible_resources": [
         "icon.png"

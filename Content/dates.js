@@ -106,12 +106,12 @@ var dates = {
             }
 
             var getMonthDays = function (daysNumber) {
-                return dates['month' + daysNumber] || (dates['month' + daysNumber] = dates._getNumberArray(1, daysNumber));
+                return dates['month' + daysNumber] || (dates['month' + daysNumber] = dates._getDayNumberStringArray(1, daysNumber));
             }
 
             var months = {};
             for (var month = 1; month <= 12; month++) {
-                months['' + month] =
+                months[(month < 10 ? '0' : '') + month.toString()] =
                     dates.months31.includes(month)
                         && getMonthDays(31)
                     || month == 2 && getMonthDays(28 + (leap && 1))
@@ -138,6 +138,15 @@ var dates = {
         }
     
         return array;
+    },
+
+    _getDayNumberStringArray: function (start, end) {
+        var array = dates._getNumberArray(start, end);
+        var newArray = [];
+        for (var i in array) {
+            newArray.push((array[i] < 10 ? '0' : '') + array[i]);
+        }
+        return newArray;
     }
 }
 
