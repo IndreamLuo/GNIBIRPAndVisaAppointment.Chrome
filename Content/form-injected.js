@@ -58,7 +58,21 @@ var messageListener = function (request, sender, sendResponse) {
 
 var url = new URL(window.location.href);
 if (url.searchParams.get('proxy')) {
-    
+
+    appointment.getNewestAppointments(function (group) {
+        chrome.runtime.sendMessage({
+            appointmentLoad: 'addLoading',
+            group: group
+        });
+    }, function (group, category, data) {
+        chrome.runtime.sendMessage({
+            appointmentLoad: 'loaded',
+            group: group,
+            category: category,
+            data: data
+        });
+    });
+
 } else {
     $(document).ready(function () {
         autoForm.onComplete(function () {

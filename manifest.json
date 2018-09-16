@@ -40,6 +40,8 @@
             "config.js",
             "Content/form-storage.js",
             "Content/preset.js",
+            "Content/dates.js",
+            "Content/proxy.js",
             "Content/appointment-apis.js",
             "Content/appointment.js",
             "Content/form-injected.js"

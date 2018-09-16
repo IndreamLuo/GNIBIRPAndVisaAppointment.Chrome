@@ -128,21 +128,40 @@ $(document).ready(function () {
     var loaded = 0;
     var apiCount = 6;
     $('.progress-bar').width(1 / (apiCount + 1) * 100 + '%');
-    appointment.getNewestAppointments(function (group) {
-        statusControl.addLoading(group);
-    }, function (group, category, data) {
-        if (group == 'irp') {
-            $('.progress-bar').width((++loaded + 1) /  (apiCount + 1) * 100 + '%');
-            if (loaded == 2) {
-                $('.progress-bar').removeClass('bg-danger').addClass('bg-warning');
-            } if (loaded == 5) {
-                $('.progress-bar').removeClass('bg-warning').addClass('bg-primary');
-            } else if (loaded == 6) {
-                $('.progress-bar').removeClass('bg-primary').addClass('bg-success');
+
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        if (request.appointmentLoad == 'addLoading') {
+            statusControl.addLoading(request.group);
+        } else if (request.appointmentLoad == 'loaded') {
+            if (request.group == 'irp') {
+                $('.progress-bar').width((++loaded + 1) /  (apiCount + 1) * 100 + '%');
+                if (loaded == 2) {
+                    $('.progress-bar').removeClass('bg-danger').addClass('bg-warning');
+                } if (loaded == 5) {
+                    $('.progress-bar').removeClass('bg-warning').addClass('bg-primary');
+                } else if (loaded == 6) {
+                    $('.progress-bar').removeClass('bg-primary').addClass('bg-success');
+                }
             }
+            decoders[request.group](request.category, request.data);
         }
-        decoders[group](category, data);
     });
+
+    // appointment.getNewestAppointments(function (group) {
+    //     statusControl.addLoading(group);
+    // }, function (group, category, data) {
+    //     if (group == 'irp') {
+    //         $('.progress-bar').width((++loaded + 1) /  (apiCount + 1) * 100 + '%');
+    //         if (loaded == 2) {
+    //             $('.progress-bar').removeClass('bg-danger').addClass('bg-warning');
+    //         } if (loaded == 5) {
+    //             $('.progress-bar').removeClass('bg-warning').addClass('bg-primary');
+    //         } else if (loaded == 6) {
+    //             $('.progress-bar').removeClass('bg-primary').addClass('bg-success');
+    //         }
+    //     }
+    //     decoders[group](category, data);
+    // });
 
     $('.notification-switch').each(function () {
         notification.setSwitch(this);

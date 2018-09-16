@@ -48,15 +48,9 @@ var appointment = {
                 
                 (function (appointmentAPI, group, category) {
                     if (appointmentAPI.url) {
-                        $.ajax({
-                            url: appointmentAPI.url,
-                            type: "GET",
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                var error = jqXHR.errorMessage;
-                            },
-                            success: function (data, jqXHR, textStatus) {
-                                onApiLoaded(group, category, data);
-                            }
+                        var getter = group == 'irp' && proxy.get || $.get;
+                        getter(appointmentAPI.url, function (data) {
+                            onApiLoaded(group, category, data);
                         });
                     } else {
                         onApiLoaded(group, category, appointmentAPI.getDirectData());
