@@ -57,7 +57,7 @@ var decoders = {
             var $list = decoders.$lists['irp'] || (decoders.$lists['irp'] = $('.irp'));
             var $types = decoders.$getTypeGroup($list, type);
 
-            if (data.slots && data.slots.length) {
+            if (data.slots && data.slots.length && data.slots[0] != 'empty') {
                 var isPreset = presets.irp.Category
                 && presets.irp.ConfirmGNIB
                 && type == presets.irp.Category + '-' + presets.irp.ConfirmGNIB;
