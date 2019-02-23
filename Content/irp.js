@@ -1,5 +1,6 @@
 var irp = {
     categories: {
+        'All': ["All"],
         'Work': ["Work Permit Holder","Hosting agreement","Working Holiday","Atypical Working Schemes","Invest or Start a Business","Visiting Academics","Doctor","3rd Level Graduate Scheme "],
         'Study': ["PhD","Masters","Higher National Diploma","Degree","English Language Course","Second Level","Pre-Masters","Visiting Students","3rd Level Graduate Scheme"],
         'Other': ["Lost Card","Stolen Card","Join family member","Permission Letter"]
