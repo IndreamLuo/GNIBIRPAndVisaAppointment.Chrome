@@ -23,34 +23,34 @@ var decoders = {
         return appointmentElement;
     },
 
-    visa: function (type, data) {
-        preset.getPreset(function (presets) {
-            var $list = decoders.$lists['visa'] || (decoders.$lists['visa'] = $('.visa'));
+    // visa: function (type, data) {
+    //     preset.getPreset(function (presets) {
+    //         var $list = decoders.$lists['visa'] || (decoders.$lists['visa'] = $('.visa'));
 
-            if (data.dates && data.dates.length && data.dates[0] != "01/01/1900") {
-                var isPreset = presets.visa.AppointType == type;
+    //         if (data.dates && data.dates.length && data.dates[0] != "01/01/1900") {
+    //             var isPreset = presets.visa.AppointType == type;
 
-                var $types = decoders.$getTypeGroup($list, type);
-                for (var index in data.dates) {
-                    var date = data.dates[index];
+    //             var $types = decoders.$getTypeGroup($list, type);
+    //             for (var index in data.dates) {
+    //                 var date = data.dates[index];
 
-                    statusControl.addLoading('visa');
-                    $.ajax({
-                        url: appointmentAPIs.getVisaAppointmentTimeOfDateAPI(date, type[0], 1),
-                        success: function (data) {
-                            data && data.slots && data.slots.forEach(slot => {
-                                $types.append(decoders._getAppointmentDiv('visa', slot.time, isPreset, 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/AppointmentSelection?OpenForm'));
-                            });
+    //                 statusControl.addLoading('visa');
+    //                 $.ajax({
+    //                     url: appointmentAPIs.getVisaAppointmentTimeOfDateAPI(date, type[0], 1),
+    //                     success: function (data) {
+    //                         data && data.slots && data.slots.forEach(slot => {
+    //                             $types.append(decoders._getAppointmentDiv('visa', slot.time, isPreset, 'https://reentryvisa.inis.gov.ie/website/INISOA/IOA.nsf/AppointmentSelection?OpenForm'));
+    //                         });
 
-                            statusControl.removeLoading('visa');
-                        }
-                    });
-                }
-            }
+    //                         statusControl.removeLoading('visa');
+    //                     }
+    //                 });
+    //             }
+    //         }
 
-            statusControl.removeLoading('visa');
-        });
-    },
+    //         statusControl.removeLoading('visa');
+    //     });
+    // },
 
     irp: function (type, data) {
         preset.getPreset(function (presets) {
@@ -126,7 +126,7 @@ $(document).ready(function () {
     });
 
     var loaded = 0;
-    var apiCount = 6;
+    var apiCount = 2;
     $('.progress-bar').width(1 / (apiCount + 1) * 100 + '%');
 
     chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -135,12 +135,12 @@ $(document).ready(function () {
         } else if (request.appointmentLoad == 'loaded') {
             if (request.group == 'irp') {
                 $('.progress-bar').width((++loaded + 1) /  (apiCount + 1) * 100 + '%');
-                if (loaded == 2) {
+                if (loaded == 0) {
+                    $('.progress-bar').addClass('bg-danger');
+                } if (loaded == 1) {
                     $('.progress-bar').removeClass('bg-danger').addClass('bg-warning');
-                } if (loaded == 5) {
-                    $('.progress-bar').removeClass('bg-warning').addClass('bg-primary');
-                } else if (loaded == 6) {
-                    $('.progress-bar').removeClass('bg-primary').addClass('bg-success');
+                } else if (loaded == 2) {
+                    $('.progress-bar').removeClass('bg-warning').addClass('bg-success');
                 }
             }
             decoders[request.group](request.category, request.data);
@@ -198,3 +198,21 @@ $(document).ready(function () {
         $(this).attr('src', $(this).attr('set-src'));
     });
 });
+
+chrome.webRequest.onHeadersReceived.addListener(
+    function(info) {
+        var headers = info.responseHeaders;
+        for (var i=headers.length-1; i>=0; --i) {
+            var header = headers[i].name.toLowerCase();
+            if (header == 'x-frame-options' || header == 'frame-options') {
+                headers.splice(i, 1); // Remove header
+            }
+        }
+        return {responseHeaders: headers};
+    },
+    {
+        urls: [ '*://*/*' ], // Pattern to match all http(s) pages
+        types: [ 'sub_frame' ]
+    },
+    ['blocking', 'responseHeaders']
+);

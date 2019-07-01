@@ -38,7 +38,7 @@ var appointment = {
     },
 
     getNewestAppointments: function (onApiLoading, onApiLoaded) {
-        var groups = ['irp', 'visa'];
+        var groups = ['irp'/*, 'visa'*/];
         for (var groupIndex in groups) {
             var group = groups[groupIndex];
             for (var index in appointmentAPIs[group]) {

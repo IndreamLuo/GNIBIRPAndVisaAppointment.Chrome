@@ -270,7 +270,7 @@ var preset = {
     getPreset: function (callback) {
         preset.presets
         && preset.presets.irp && preset.presets.irp.loaded
-        && preset.presets.visa && preset.presets.visa.loaded
+        // && preset.presets.visa && preset.presets.visa.loaded
         && preset.presets.notification && preset.presets.notification.loaded
         ? callback(preset.presets)
         : (function () {
@@ -286,20 +286,25 @@ var preset = {
                                 preset.presets[key][inputData.id] = inputData.value;
                             });
                             preset.presets[key].loaded = true;
+
+                            if (key == 'irp') {
+                                preset.presets[key]['Category'] = 'All';
+                                preset.presets[key]['SubCategory'] = 'All';
+                            }
                         }
                         callback();
                     });
                 };
 
                 retrieveData('irp', function () {
-                    retrieveData('visa', function () {
+                    // retrieveData('visa', function () {
                         retrieveData('notification', function () {
                             var callback;
                             while (callback = preset._getPresetCallbacks.shift()) {
                                 callback(preset.presets);
                             }
                         });
-                    });
+                    // });
                 });
             } else {
                 preset._getPresetCallbacks.push(callback);

@@ -150,4 +150,4 @@ var dates = {
     }
 }
 
-dates.years = dates._getNumberArray(2020, 1875);
+dates.years = dates._getNumberArray(2025, 1875);
