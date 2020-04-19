@@ -23,6 +23,9 @@
         <script type="text/javascript" src="Content/master.js"></script>
         <link type="text/css" rel="stylesheet" href="Content/master.css" />
 
+        <script type="text/javascript" src="Content/data-usage-request.js"></script>
+        <link type="text/css" rel="stylesheet" href="Content/data-usage-request.css" />
+
         <script type="text/javascript" src="Content/portal.js"></script>
         <link type="text/css" rel="stylesheet" href="Content/portal.css" />
     </head>
@@ -111,6 +114,24 @@
                 Don't close. Auto-filling your form from Preset.
             </div>
             <img class="rounded mx-auto d-block" style="width: 200px" src="Content/loading.gif" />
+        </div>
+
+        <div class="modal fade" id="dataUsageRequest" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Data Usage Agreement</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="content"></div>
+                        <button type="button" class="more btn btn-success show-all">Show/Hide detais >></button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Disagree</button>
+                        <button type="button" class="btn btn-primary btn-agree">Agree</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

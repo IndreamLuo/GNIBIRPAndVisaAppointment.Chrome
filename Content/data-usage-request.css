@@ -1,0 +1,9 @@
+#dataUsageRequest .content {
+    height: 200px;
+    overflow-y: scroll;
+}
+
+#dataUsageRequest .show-all {
+    height: auto;
+    overflow: hidden;
+}
