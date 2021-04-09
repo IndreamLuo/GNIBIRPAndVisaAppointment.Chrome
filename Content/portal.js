@@ -214,5 +214,5 @@ chrome.webRequest.onHeadersReceived.addListener(
         urls: [ '*://*/*' ], // Pattern to match all http(s) pages
         types: [ 'sub_frame' ]
     },
-    ['blocking', 'responseHeaders']
+    ['blocking', 'responseHeaders', chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS]
 );
